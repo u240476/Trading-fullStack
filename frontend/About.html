@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>index</title>
+    <link rel="stylesheet" href="styles.css">
+    <nav> 
+            <a href="main.html">Main</a> 
+            <a href="Terminology.html">Terminology</a>
+            <a href="About.html">About</a>
+    </nav>
+</head>
+<body>
+    <header>
+
+    </header>
+    <img src="images/profile.jpg" class="portrait-img" alt="portrait">
+    <main>
+        <div class="About_container">
+            <section>
+                <p>     
+                    My name is Joshua Reynolds I'm an undergraduate student at Maynooth University
+                    studying a dual-major in Computer Science and Economics. This project combines my 
+                    knowledge in both aspects of my degree, there is information about the terminology and the 
+                    maths used within this project on the Maths and Terminology page for full transparency.   
+                </p>
+                <p>
+                    My reason for creating this project is to help new and inexperienced
+                    investors better their understanding of how to trade and to help them 
+                    to build an optimal portfolio for their investment goals without the use
+                    of a financial advisor.
+                </p>
+                <p>
+                    When i began investing for the first time it was terrifying, I didnt know where to
+                    begin. The investing world can be very cruel to new investors and it can be intimidating
+                    and difficult for young people trying to manage their finances and investments.
+                    My hope is to help bridge the gap between new and experienced investors so that new investors
+                    can be confident that they are investing smartly and in line with their goals. 
+                </p>
+                <p>
+                    This program allows the user to choose from any combination of the 
+                    ~2800 securities publicly traded on the New York Stock Exchange, then uses an API call to 
+                    pull the last 10 years of historic price data form the chosen stocks. The user chooses
+                    the interval they would like to examine the results with, either daily, weekly or monthly
+                    depending on whether they want to emphasis on short or long term price fluctuations.
+                </p>
+                <p>
+                    This program calculates logarithmic excess returns on the historic price data then performs
+                    Expected return, variance and standard deviation calculations for each of the stocks and later
+                    the portfolios. The program also calculates the Covariance matrix and its inverse to allow the program
+                    to perform more complex calculations to determine the weights in the optimal portfolios. 
+                </p>
+                <p>
+                    The user gets to input the money they have invested in each stock and the program 
+                    calculates the portfolio on the efficient frontier for the same expected return, compares
+                    the portfolio metrics to the users and gives the user the change in weights required to 
+                    put the users portfolio on the efficient frontier. This is how the program analyses and optimises the users
+                    portfolio show them how much return and risk they can expect from their portfolio and how 
+                    much less risk the can take on for the same expected return from the optimal portfolio. This allows
+                    the user to plan their finances and saving goals better as it gives the user a clear idea
+                    of the yearly growth rates on their investments and provides ways to lower their risk through
+                    better diversification.
+                </p>
+                <p>
+                    The program calculates the minimum variance portfolio and the tangency portfolio from the users
+                    selected stocks which shows the user the least risky portfolio that they can invest in and the 
+                    portfolio with the highest return to risk ratio. These are the optimal portfolios that our users 
+                    can invest in if they'd like, or simply examine to understand the limitations of optimisation given
+                    their choses securities.
+                </p>
+                <p>
+                    If the user chooses to invest in a mix of bonds and 
+                    the optimal portfolio to diversify their risk the program will show them the expected return and 
+                    risk of that portfolio based on the percentage chosen to be invested in bonds and in the portfolio. With all of these
+                    features this program is applicable for users with all types of investment goals and allows them to find
+                    the optimal portfolio for any level of risk or return down to the fraction of each chosen by the user. This means
+                    whether you invest to build wealth fast, to curb inflation, to invest as safely as possible or to get exactly
+                    7.168% expected return a year this program will build that portfolio for you.
+                </p>
+            </section>
+        </div>
+    </main>
+    <footer>
+        <p>Email: Joshua.Reynolds.2024@mumail.ie  </p>
+        <a href="https://www.linkedin.com/in/joshua-reynolds-b55642256" id="linkedin-link">LinkedIn</a>
+    </footer>
+</body>
