@@ -540,6 +540,7 @@ public static double[] downloadYahooAdjClose(
      * @param weights
      * @return Portfolio Variance
      */
+    /* 
     public static double CalculatingPortfolioVariance(double[][] coVar, double[] weights) {
     double totalVariance = 0.0;
 
@@ -554,6 +555,7 @@ public static double[] downloadYahooAdjClose(
     }
     return totalVariance;
     }
+    */
     /**
      * Calculates the weights in the users current portfolio
      * with these weights we can calculate the portfolios metrics and compare them to our optimal portfolios
@@ -580,6 +582,7 @@ public static double[] downloadYahooAdjClose(
      * @param rf
      * @return unconstrained weights of each asset in the tangency portfolio
      */ 
+    /* 
     public static double[] CalculatingTangencyPortfolio(
          double[][] inverse,
          double[] ExpReturns,
@@ -607,6 +610,7 @@ public static double[] downloadYahooAdjClose(
         }
         return weights;
     }
+        */
     /**
      * Calculates the Sharpe Ratio for the tangency portfolio
      * This allows us to construct the capital allocation line
@@ -624,11 +628,13 @@ public static double[] downloadYahooAdjClose(
      * @param variance
      * @return standard deviation
      */
+    /* 
     public static double CalculatingPortfolioSTDV(double variance){
         double stdv = Math.sqrt(variance);
         double stdvAsPercentage = stdv;
         return stdvAsPercentage;
     }
+        */
     /**
      * Calculates standard deviation for the special case that the portfolio is on the capital allocation line 
      * @param TPStandardDeviation
@@ -663,6 +669,7 @@ public static double[] downloadYahooAdjClose(
      * @param R
      * @return weights of portfolio on the efficient frontier
      */
+    /* 
     public static double[] CalculatingForGivenReturn(
         double [][] inverse,  
         double[] ExpReturns,
@@ -692,6 +699,8 @@ public static double[] downloadYahooAdjClose(
         //can only be used against user portfolio
         return weights;
     }
+    */
+
     // this method needs to be properly called in main 
     /**
      * Calculates the weights for the portfolio on the efficient frontier for a user inputed level of standard deviation
@@ -701,6 +710,7 @@ public static double[] downloadYahooAdjClose(
      * @param STDV
      * @return weights of portfolio on the efficient frontier
      */
+    /* 
     public static double[] CalculatingForGivenRisk(
         double[][] inverse,
         double[] ExpReturns,
@@ -740,5 +750,6 @@ public static double[] downloadYahooAdjClose(
         
         return weights;
     }
+        */
     
 }

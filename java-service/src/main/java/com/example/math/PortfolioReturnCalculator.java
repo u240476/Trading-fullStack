@@ -7,7 +7,6 @@ public class PortfolioReturnCalculator {
         for(int i = 0; i<size; i++){
             ExpectedReturn += (EmonthlyReturns[i]*Weights[i]);
         }
-        double ExpectedReturnAsPercentage = (ExpectedReturn);
-        return ExpectedReturnAsPercentage;
+        return ExpectedReturn;
     }
 }
