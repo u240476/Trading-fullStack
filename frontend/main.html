@@ -33,7 +33,7 @@
 
     const input = document.getElementById("tickers-input").value;
 
-    const tickers = input.split(","); // e.g. AAPL,MSFT,TSLA
+    const tickers = input.split(","); 
 
     const query = new URLSearchParams({
         tickers: tickers.join(",")
@@ -48,7 +48,7 @@
 
         const data = await response.json();
 
-        // Display the data in the response element
+        
         document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
 
 

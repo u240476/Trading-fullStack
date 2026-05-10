@@ -9,7 +9,7 @@ router.get("/expected-returns", async (req, res) => {
             `http://localhost:8080/expected-return?tickers=${encodeURIComponent(tickers)}`
         );
 
-        const text = await response.text(); // 👈 important debug step
+        const text = await response.text(); 
 
         console.log("RAW SPRING RESPONSE:", text);
 
