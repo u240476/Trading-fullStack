@@ -33,7 +33,7 @@ exports.portfolioTickers = async (req,res) => {
 exports.stockTickers = async (req, res) => {
     const {ticker} = req.body;
 
-    if(ticker.length() === 0){
+    if(ticker.length === 0){
         return res.status(400).json({error: "You must enter a tickers to see data"});
     }
     if(!(typeof ticker !== "string")){

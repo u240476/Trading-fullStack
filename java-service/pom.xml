@@ -7,6 +7,13 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <!--SpringBoot Parent-->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.2</version>
+        <relativePath/>
+    </parent>
 
     <!-- Project coordinates -->
     <groupId>com.example</groupId>
@@ -34,6 +41,11 @@
         <groupId>org.ojalgo</groupId>
         <artifactId>ojalgo</artifactId>
         <version>52.0.0</version>
+    </dependency>
+    <!--SpringBoot Dependency-->
+    <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
 </dependencies>
     <!-- Build plugins -->

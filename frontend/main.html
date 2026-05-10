@@ -19,9 +19,46 @@
         </div>
     </header>
     <main>
-        
+           <form id="tickers-form">
+                <input id="tickers-input" placeholder="AAPL,MSFT,GOOGL">
+                <button id="submit-btn">Submit</button>
+            </form>
+
+            <div id="response"></div>
 
     </main>
+    <script>
+       document.getElementById("tickers-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const input = document.getElementById("tickers-input").value;
+
+    const tickers = input.split(","); // e.g. AAPL,MSFT,TSLA
+
+    const query = new URLSearchParams({
+        tickers: tickers.join(",")
+    });
+
+    try {
+        const response = await fetch(`http://localhost:3010/expected-returns?${query}`);
+
+        if (!response.ok) {
+            throw new Error("Server error");
+        }
+
+        const data = await response.json();
+
+        // Display the data in the response element
+        document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+
+
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById("response").innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
+    }
+});
+    </script>
     <footer>
         <p>Email: Joshua.Reynolds.2024@mumail.ie  </p>
         <a href="https://www.linkedin.com/in/joshua-reynolds-b55642256" id="linkedin-link">LinkedIn</a>
