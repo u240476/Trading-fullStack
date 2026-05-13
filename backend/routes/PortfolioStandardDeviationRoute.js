@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
     });
 
     const response = await fetch(
-        `http://localhost:8080/expected-portfolio-return?${params.toString()}`
+        `http://localhost:8080/portfolio-standard-deviation?${params.toString()}`
     );
 
         const text = await response.text(); 

@@ -9,11 +9,11 @@ public class StandardDeviationResponse {
         this.standardDeviation = standardDeviation;
     }
 
-    public String[] tickers() {
+    public String[] getTickers() {
         return tickers;
     }
 
-    public double[] standardDeviation() {
+    public double[] getStandardDeviation() {
         return standardDeviation;
     }
     

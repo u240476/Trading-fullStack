@@ -3,16 +3,11 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
     try {
-        const { tickers, proportions } = req.query;
+        const { tickers } = req.query;
 
-    const params = new URLSearchParams({
-        tickers,
-        proportions
-    });
-
-    const response = await fetch(
-        `http://localhost:8080/expected-portfolio-return?${params.toString()}`
-    );
+        const response = await fetch(
+            `http://localhost:8080/variance?tickers=${encodeURIComponent(tickers)}`
+        );
 
         const text = await response.text(); 
 

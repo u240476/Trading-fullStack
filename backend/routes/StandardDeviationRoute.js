@@ -1,25 +1,23 @@
 const express = require("express");
+console.log("LOADING STD DEV ROUTE FILE");
 const router = express.Router();
 
 router.get("/", async (req, res) => {
     try {
-        const { tickers, proportions } = req.query;
+        const { tickers } = req.query;
 
-    const params = new URLSearchParams({
-        tickers,
-        proportions
-    });
-
-    const response = await fetch(
-        `http://localhost:8080/expected-portfolio-return?${params.toString()}`
-    );
+        const response = await fetch(
+            `http://localhost:8080/standard-deviation?tickers=${encodeURIComponent(tickers)}`
+        );
 
         const text = await response.text(); 
 
         console.log("RAW SPRING RESPONSE:", text);
 
         if (!response.ok) {
-            return res.status(500).json({ error: "microservice error" });
+            const errText = await response.text();
+            console.error("BACKEND ERROR:", errText);
+            throw new Error(errText);
         }
 
         const data = JSON.parse(text);
@@ -31,4 +29,5 @@ router.get("/", async (req, res) => {
         return res.status(500).json({ error: "server error" });
     }
 });
+console.log("STD DEV ROUTE READY");
 module.exports = router;

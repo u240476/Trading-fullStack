@@ -6,7 +6,7 @@ router.get("/", async (req, res) => {
         const { tickers } = req.query;
 
         const response = await fetch(
-            `http://localhost:8080/expected-return?tickers=${encodeURIComponent(tickers)}`
+            `http://localhost:8080/mvp?tickers=${encodeURIComponent(tickers)}`
         );
 
         const text = await response.text(); 
@@ -14,7 +14,8 @@ router.get("/", async (req, res) => {
         console.log("RAW SPRING RESPONSE:", text);
 
         if (!response.ok) {
-            return res.status(500).json({ error: "microservice error" });
+            console.error("SPRING ERROR:", text);
+            return res.status(500).json({ error: "microservice error", details: text});
         }
 
         const data = JSON.parse(text);
@@ -22,8 +23,10 @@ router.get("/", async (req, res) => {
         return res.status(200).json(data);
 
     } catch (err) {
+        
         console.error(err);
-        return res.status(500).json({ error: "server error" });
+        return res.status(500).json({ error: "server error", details: text });
     }
 });
+
 module.exports = router;

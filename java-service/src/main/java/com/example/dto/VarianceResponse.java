@@ -9,11 +9,11 @@ public class VarianceResponse {
         this.variance = variance;
     }
 
-    public String[] tickers() {
+    public String[] getTickers() {
         return tickers;
     }
 
-    public double[] variance() {
+    public double[] getVariance() {
         return variance;
     }
 }

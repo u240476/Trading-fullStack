@@ -19,28 +19,79 @@
         </div>
     </header>
     <main>
-           <form id="tickers-form">
+        <section id="forms">
+           <form id="expected-returns-form">
+                <h4>Expected Return</h4>
+                <label for="tickers-input">Enter Stock Tickers</label>
                 <input id="tickers-input" placeholder="AAPL,MSFT,GOOGL">
                 <button id="submit-btn">Submit</button>
+                <div id="expected-returns-response"></div>
             </form>
-
-            <div id="response"></div>
+             
+            <form id="expected-portfolio-returns-form">
+                <h4>Stock Expected Portfolio Return</h4>
+                <label for="portfolio-returns-tickers-input">Enter Stock Tickers</label>
+                <input id="portfolio-returns-tickers-input" placeholder="AAPL,MSFT,GOOGL">
+                <label for="portfolio-returns-proportions-input">Enter Amount Invested</label>
+                <input id="portfolio-returns-proportions-input" placeholder="1000,2000,30000">
+                <button id="submit-btn">Submit</button>
+                <div id="expected-portfolio-returns-response"></div>
+            </form>
+            
+            
+            <form id="mvp-form">
+                <h4>Minimum Variance Portfolio Weights</h4>
+                <label for="mvp-tickers-input">Enter Stock Tickers</label>
+                <input id="mvp-tickers-input" placeholder="AAPL,MSFT,GOOGL">
+                <button id="mvp-submit-btn">Submit</button>
+                <div id="mvp-response"></div>
+            </form>
+            
+            <form id="variance-form">
+                <h4>Stock Variance</h4>
+                <label for="variance-tickers-input">Enter Stock Tickers</label>
+                <input id="variance-tickers-input" placeholder="AAPL,MSFT,GOOGL">
+                <button id="variance-submit-btn">Submit</button>
+                <div id="variance-response"></div>
+            </form>
+            
+            <form id="standard-deviation-form">
+                <h4>Stock Standard Deviation</h4>
+                <label for="standard-deviation-tickers-input">Enter Stock Tickers</label>
+                <input id="standard-deviation-tickers-input" placeholder="AAPL,MSFT,GOOGL">
+                <button id="standard-deviation-submit-btn">Submit</button>
+                <div id="standard-deviation-response"></div>
+            </form>
+            
+        </section>
+         
 
     </main>
     <script>
-       document.getElementById("tickers-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
+       document.getElementById("expected-returns-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
 
     const input = document.getElementById("tickers-input").value;
 
-    const tickers = input.split(","); 
+    const tickersOg = input
+    .split(",")
+    .map(t => t.trim())
+    .filter(Boolean);
+
+    const tickers = [...new Set(tickersOg)];
+
+    if(tickers.length === 0){
+        document.getElementById("expected-returns-response").innerHTML = `<p style="color: red;">Error: ${"you must enter all fields"}</p>`;
+        return;
+    }
+
 
     const query = new URLSearchParams({
         tickers: tickers.join(",")
     });
 
     try {
-        const response = await fetch(`http://localhost:3010/expected-returns?${query}`);
+        const response = await fetch(`http://localhost:3010/api/expected-returns?${query}`);
 
         if (!response.ok) {
             throw new Error("Server error");
@@ -49,13 +100,189 @@
         const data = await response.json();
 
         
-        document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        document.getElementById("expected-returns-response").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
 
 
 
     } catch (err) {
         console.error(err);
-        document.getElementById("response").innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
+        document.getElementById("expected-returns-response").innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
+    }
+});
+document.getElementById("mvp-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+    const input = document.getElementById("mvp-tickers-input").value;
+
+    const tickersOg = input
+    .split(",")
+    .map(t => t.trim())
+    .filter(Boolean);
+
+    const tickers = [...new Set(tickersOg)]; 
+    
+    if(tickers.length === 0){
+        document.getElementById("mvp-response").innerHTML = `<p style="color: red;">Error: ${"you must enter all fields"}</p>`;
+        return;
+    }
+
+    const query = new URLSearchParams({
+        tickers: tickers.join(",")
+    });
+
+    try {
+        const response = await fetch(`http://localhost:3010/api/mvp?${query}`);
+
+        if (!response.ok) {
+            throw new Error("Server error");
+        }
+
+        const data = await response.json();
+
+        
+        document.getElementById("mvp-response").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+
+
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById("mvp-response").innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
+    }
+});
+document.getElementById("variance-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+    const input = document.getElementById("variance-tickers-input").value;
+
+    const tickersOg = input
+    .split(",")
+    .map(t => t.trim())
+    .filter(Boolean);
+
+    const tickers = [...new Set(tickersOg)];
+    
+    if(tickers.length === 0){
+        document.getElementById("variance-response").innerHTML = `<p style="color: red;">Error: ${"you must enter all fields"}</p>`;
+        return;
+    }
+
+    const query = new URLSearchParams({
+        tickers: tickers.join(",")
+    });
+
+    try {
+        const response = await fetch(`http://localhost:3010/api/variance?${query}`);
+
+        if (!response.ok) {
+            throw new Error("Server error");
+        }
+
+        const data = await response.json();
+
+        
+        document.getElementById("variance-response").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+
+
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById("variance-response").innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
+    }
+});
+document.getElementById("standard-deviation-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+    const input = document.getElementById("standard-deviation-tickers-input").value;
+
+    const tickersOg = input
+    .split(",")
+    .map(t => t.trim())
+    .filter(Boolean);
+
+    const tickers = [...new Set(tickersOg)]; 
+    
+    if(tickers.length === 0){
+        document.getElementById("standard-deviation-response").innerHTML = `<p style="color: red;">Error: ${"you must enter all fields"}</p>`;
+        return;
+    }
+
+    const query = new URLSearchParams({
+        tickers: tickers.join(",")
+    });
+
+    try {
+        const response = await fetch(`http://localhost:3010/api/standard-deviation?${query}`);
+
+        if (!response.ok) {
+            throw new Error("Server error");
+        }
+
+        const data = await response.json();
+
+        
+        document.getElementById("standard-deviation-response").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+
+
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById("standard-deviation-response").innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
+    }
+});
+document.getElementById("expected-portfolio-returns-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+    const input1 = document.getElementById("portfolio-returns-tickers-input").value;
+    const input2 = document.getElementById("portfolio-returns-proportions-input").value;
+
+    const tickersOg = input1
+    .split(",")
+    .map(t => t.trim())
+    .filter(Boolean);
+
+    const tickers = [...new Set(tickersOg)]; 
+
+    if(tickers.length === 0){
+        document.getElementById("expected-portfolio-returns-response").innerHTML = `<p style="color: red;">Error: ${"you must enter all fields"}</p>`;
+        return;
+    }
+
+    const proportionsOg = input2
+    .split(",")
+    .map(t => t.trim())
+    .filter(Boolean);
+
+    const proportions = [...new Set(proportionsOg)]; 
+
+    if(proportions.length !== tickers.length){
+        document.getElementById("expected-portfolio-returns-response").innerHTML = `<p style="color: red;">Error: ${"must have one amount invested per ticker"}</p>`;
+        return;
+    }
+    
+
+    const query = new URLSearchParams({
+        tickers: tickers.join(","),
+        proportions: proportions.join(",")
+    });
+
+    try {
+        const response = await fetch(`http://localhost:3010/api/expected-portfolio-returns?${query}`);
+
+        if (!response.ok) {
+            throw new Error("Server error");
+        }
+
+        const data = await response.json();
+
+        
+        document.getElementById("expected-portfolio-returns-response").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+
+
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById("expected-portfolio-returns-response").innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
+        return;
     }
 });
     </script>

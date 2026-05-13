@@ -11,15 +11,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.dto.ExpectedReturnsPortfolioResponse;
 import com.example.dto.ExpectedReturnsResponse;
 import com.example.dto.MVPResponse;
+import com.example.dto.STDVPortfolioResponse;
 import com.example.dto.StandardDeviationResponse;
+import com.example.dto.VariancePortfolioResponse;
 import com.example.dto.VarianceResponse;
+import com.example.math.CovarianceMatrixCalculator;
 import com.example.math.ExpMonthlyReturnsCalculator;
 import com.example.math.LogarithmicReturnsCalculator;
 import com.example.math.PortfolioReturnCalculator;
+import com.example.math.PortfolioStandardDeviationCalculator;
+import com.example.math.PortfolioVarianceCalculator;
 import com.example.math.StandardDeviationCalculator;
 import com.example.math.UserPortfolioWeights;
 import com.example.math.VarianceCalculator;
-import com.example.math.CovarianceMatrixCalculator;
 import com.example.optimisation.MVPWeights;
 import com.example.service.PortfolioService;
 
@@ -100,6 +104,82 @@ public class PortfolioController {
                 PortfolioReturnCalculator.CalculatingPortfolioReturn(expected, weights);
 
         return new ExpectedReturnsPortfolioResponse(portfolioReturn);
+    }
+
+    @GetMapping("/portfolio-variance")
+    public VariancePortfolioResponse getExpectedVariancePortfolio(
+            @RequestParam String tickers,
+            @RequestParam(defaultValue = "1mo") String interval,
+            @RequestParam String proportions
+    ) throws IOException {
+
+        String[] tickerArray = tickers.split(",");
+        String[] proportionsStringArray = proportions.split(",");
+
+        int l = proportionsStringArray.length;
+
+        double[] proportionsArray = new double[l];
+        for(int i = 0; i<l; i++){
+                proportionsArray[i] = Double.parseDouble(proportionsStringArray[i]);
+        }
+
+        double[][] prices = getPrices(tickerArray, interval);
+
+        double[][] returns =
+                LogarithmicReturnsCalculator.CalculatingReturnMatrix(prices);
+
+        double[] expected =
+                ExpMonthlyReturnsCalculator.ExpectedMonthlyReturns(returns);
+
+        double[] weights =
+                UserPortfolioWeights.CalculatingUserWeights(proportionsArray);
+        
+        double[][] covMatrix  = 
+                CovarianceMatrixCalculator.varianceCovarianceMatrix(returns, expected);
+        
+        double portfolioVariance =
+                PortfolioVarianceCalculator.CalculatingPortfolioVariance(covMatrix, weights);
+
+        return new VariancePortfolioResponse(portfolioVariance);
+    }
+    @GetMapping("/portfolio-standard-deviation")
+    public STDVPortfolioResponse getExpectedSTDVPortfolio(
+            @RequestParam String tickers,
+            @RequestParam(defaultValue = "1mo") String interval,
+            @RequestParam String proportions
+    ) throws IOException {
+
+        String[] tickerArray = tickers.split(",");
+        String[] proportionsStringArray = proportions.split(",");
+
+        int l = proportionsStringArray.length;
+
+        double[] proportionsArray = new double[l];
+        for(int i = 0; i<l; i++){
+                proportionsArray[i] = Double.parseDouble(proportionsStringArray[i]);
+        }
+
+        double[][] prices = getPrices(tickerArray, interval);
+
+        double[][] returns =
+                LogarithmicReturnsCalculator.CalculatingReturnMatrix(prices);
+
+        double[] expected =
+                ExpMonthlyReturnsCalculator.ExpectedMonthlyReturns(returns);
+
+        double[] weights =
+                UserPortfolioWeights.CalculatingUserWeights(proportionsArray);
+        
+        double[][] covMatrix  = 
+                CovarianceMatrixCalculator.varianceCovarianceMatrix(returns, expected);
+        
+        double portfolioVariance =
+                PortfolioVarianceCalculator.CalculatingPortfolioVariance(covMatrix, weights);
+
+        double portfolioStandardDeviation = 
+                PortfolioStandardDeviationCalculator.CalculatingPortfolioSTDV(portfolioVariance);
+
+        return new STDVPortfolioResponse(portfolioStandardDeviation);
     }
 
     @GetMapping("/variance")
