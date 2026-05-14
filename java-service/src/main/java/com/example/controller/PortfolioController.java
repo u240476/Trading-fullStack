@@ -12,6 +12,7 @@ import com.example.dto.ExpectedReturnsPortfolioResponse;
 import com.example.dto.ExpectedReturnsResponse;
 import com.example.dto.GraphDataResponse;
 import com.example.dto.GraphMVPDataResponse;
+import com.example.dto.GraphTPResponse;
 import com.example.dto.MVPResponse;
 import com.example.dto.STDVPortfolioResponse;
 import com.example.dto.StandardDeviationResponse;
@@ -19,6 +20,7 @@ import com.example.dto.VariancePortfolioResponse;
 import com.example.dto.VarianceResponse;
 import com.example.math.CovarianceMatrixCalculator;
 import com.example.math.ExpMonthlyReturnsCalculator;
+import com.example.math.InverseMatrixCalculator;
 import com.example.math.LogarithmicReturnsCalculator;
 import com.example.math.PortfolioReturnCalculator;
 import com.example.math.PortfolioStandardDeviationCalculator;
@@ -27,6 +29,7 @@ import com.example.math.StandardDeviationCalculator;
 import com.example.math.UserPortfolioWeights;
 import com.example.math.VarianceCalculator;
 import com.example.optimisation.MVPWeights;
+import com.example.optimisation.TPWeights;
 import com.example.service.PortfolioService;
 
 
@@ -331,6 +334,40 @@ public class PortfolioController {
         } catch (Exception e) {
         e.printStackTrace();  
         throw e;
+        }
     }
+    @GetMapping("/graph-tp-data")
+    public GraphTPResponse getGraphTPData(
+        @RequestParam String tickers,
+        @RequestParam(defaultValue = "1mo") String interval
+    ) throws IOException {
+        String[] tickerArray = tickers.split(",");
+
+        double[][] prices = getPrices(tickerArray, interval);
+
+        double[][] returns =
+                LogarithmicReturnsCalculator.CalculatingReturnMatrix(prices);
+
+        double[] expected =
+                ExpMonthlyReturnsCalculator.ExpectedMonthlyReturns(returns);
+
+        double[][] covMatrix  = 
+                CovarianceMatrixCalculator.varianceCovarianceMatrix(returns, expected);
+
+        double[][] inverseMatrix =
+                InverseMatrixCalculator.pseudoInverse(covMatrix);
+        
+        double[] tpWeights =
+                TPWeights.CalculatingTangencyPortfolio(inverseMatrix, expected, 0.0025);
+                
+        double portfolioVariance =
+                PortfolioVarianceCalculator.CalculatingPortfolioVariance(covMatrix, tpWeights);
+
+        double portfolioStandardDeviation = 
+                PortfolioStandardDeviationCalculator.CalculatingPortfolioSTDV(portfolioVariance);
+
+        double portfolioReturn =
+                PortfolioReturnCalculator.CalculatingPortfolioReturn(expected, tpWeights);
+        return new GraphTPResponse(portfolioReturn, portfolioStandardDeviation);
     }
 }

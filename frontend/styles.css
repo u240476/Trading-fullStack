@@ -167,6 +167,18 @@ button {
     font-weight: 600;
     margin-top: 6px;
 }
+#clear-graph-button{
+    margin-bottom: 20px;
+}
+
+#riskReturnChart {
+    display: block;
+    width: 800px;
+    height: 500px;
+    margin: 0 auto;
+    margin-top: 30px;
+    background-color: #111827;
+}
 
 button:hover {
     transform: translateY(-1px);

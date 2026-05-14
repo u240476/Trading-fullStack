@@ -1,33 +1,49 @@
 package com.example.optimisation;
 
-//NOTE NOT WORKING NEEDS TO BE FULLY TESTED
-//TENDENCY TO DEVIATE TO FULL WEIGHT IN ONE STOCK AND HUGE NEGATIVE WEIGHTS IN ANOTHER 
 public class TPWeights {
+
     public static double[] CalculatingTangencyPortfolio(
-         double[][] inverse,
-         double[] ExpReturns,
-         double rf
-    ){
-        double[] vector = new double[inverse.length];
-        double[] riskPremium = new double[ExpReturns.length];
-        for(int i = 0; i < riskPremium.length; i++){
-            riskPremium[i] = ExpReturns[i] - rf;
+            double[][] inverse,
+            double[] ExpReturns,
+            double rf
+    ) {
+
+        int n = ExpReturns.length;
+
+        // excess returns
+        double[] excessReturns = new double[n];
+
+        for (int i = 0; i < n; i++) {
+            excessReturns[i] = ExpReturns[i] - rf;
         }
-        
-        double denom = 0.0;
-        for(int i = 0; i < inverse.length; i++){
+
+        // raw tangency vector
+        double[] rawWeights = new double[n];
+
+        for (int i = 0; i < n; i++) {
+
             double sum = 0.0;
-            for(int j = 0; j < inverse.length; j++){
-                sum += inverse[i][j]* riskPremium[j];
-               
+
+            for (int j = 0; j < n; j++) {
+                sum += inverse[i][j] * excessReturns[j];
             }
-            vector[i] = sum;
-            denom += vector[i];
+
+            rawWeights[i] = sum;
         }
-        double[] weights = new double[inverse.length];
-        for(int i = 0; i<weights.length; i++){
-            weights[i] = vector[i]/denom;
+
+        // normalize weights to sum to 1
+        double total = 0.0;
+
+        for (int i = 0; i < n; i++) {
+            total += rawWeights[i];
         }
+
+        double[] weights = new double[n];
+
+        for (int i = 0; i < n; i++) {
+            weights[i] = rawWeights[i] / total;
+        }
+
         return weights;
     }
 }
