@@ -63,11 +63,163 @@
             </form>
             
         </section>
-        <canvas id="riskReturnChart"></canvas>
+        <section id="graph-forms">
+            <form id="graph-form">
+                <h4>Graph a Securities Returns and Volatility</h4>
+                <label for="graph-ticker-input">Enter a Stock Ticker</label>
+                <input id="graph-ticker-input" placeholder="AAPL">
+                <button>Add Stock</button>
+            </form>
+            <form id="graph-mvp-form">
+                <h4>Graph a MVP's Returns and Volatility</h4>
+                <label for="graph-mvp-ticker-input">Enter the Stocks to Build an MVP</label>
+                <input id="graph-mvp-ticker-input" placeholder="AAPL">
+                <button>Add Stock</button>
+            </form>
+        </section>
+         <canvas id="riskReturnChart"></canvas>
+         <div id="graph-response"></div>
          
+        
+         <button type="button" id="clear-graph-button">Clear Graph</button>
 
     </main>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const portfolioData = [];
+
+        const ctx = document.getElementById("riskReturnChart");
+
+        const chart = new Chart(ctx, {
+        type: "scatter",
+        data: {
+        datasets: [
+            {
+                label: "Stocks",
+                data: []
+            },
+            {
+                label: "Minimum Variance Portfolio",
+                data: [],
+                pointBackgroundColor: "green"
+            }
+        ]
+        },
+        options: {
+            scales: {
+                x: {
+                    min:-10,
+                    max: 30,
+                    title: {
+                        display: true,
+                        text: "Standard Deviation (%)"
+                    }
+                },
+            y: {
+                min: -10,
+                max: 30,
+                title: {
+                    display: true,
+                    text: "Expected Return (%)"
+                }
+            }
+        }
+    }
+});
+        document.getElementById("clear-graph-button").addEventListener("click", () => {
+
+            chart.data.datasets[0].data = [];
+            chart.data.datasets[1].data = [];
+
+            portfolioData.length = 0;
+
+            chart.update();
+        });
+        document.getElementById("graph-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const ticker = document
+                .getElementById("graph-ticker-input")
+                .value
+                .trim()
+                .toUpperCase();
+
+            if (!ticker || ticker.includes(",")) {
+                alert("Please enter only ONE ticker.");
+                return;
+            }
+            try{
+            const response = await fetch(
+                `http://localhost:3010/api/graph-data?ticker=${ticker}`
+            );
+
+            const data = await response.json();
+
+            const stock = {
+                ticker: ticker,
+                expectedReturn: data.expectedReturn * 100,
+                standardDeviation: data.standardDeviation * 100
+            };
+
+            portfolioData.push(stock);
+
+            chart.data.datasets[0].data.push({
+            x: stock.standardDeviation,
+            y: stock.expectedReturn
+        });
+
+        chart.update();
+
+        document.getElementById("graph-ticker-input").value = "";
+        }catch(err){
+            console.error(err);
+        }
+            
+        });
+         document.getElementById("graph-mvp-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const tickers = document
+                .getElementById("graph-mvp-ticker-input")
+                .value
+                .trim()
+                .toUpperCase();
+
+            if (!tickers) {
+                alert("Please enter tickers.");
+                return;
+            }
+            try{
+            const response = await fetch(
+                `http://localhost:3010/api/graph-mvp-data?tickers=${tickers}`
+            );
+            if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(errText);
+}
+
+            const data = await response.json();
+
+            const stock = {
+                portfolioReturn: data.portfolioReturn * 100,
+                portfolioStandardDeviation: data.portfolioStandardDeviation * 100
+            };
+
+            portfolioData.push(stock);
+
+            chart.data.datasets[1].data.push({
+                x: stock.portfolioStandardDeviation,
+                y: stock.portfolioReturn
+            });
+
+        chart.update();
+
+        document.getElementById("graph-mvp-ticker-input").value = "";
+        }catch(err){
+            console.error(err);
+        }
+            
+        });
+
+
        document.getElementById("expected-returns-form").addEventListener("submit", async (e) => {
         e.preventDefault();
 

@@ -13,6 +13,8 @@ const varianceRoute = require("./routes/VarianceRoute");
 const standardDeviationRoute = require("./routes/StandardDeviationRoute");
 const portfolioStandardDeviationRoute = require("./routes/PortfolioStandardDeviationRoute");
 const portfolioVarianceRoute = require("./routes/PortfolioVarianceRoute");
+const graphDataRoute = require("./routes/GraphDataRoute");
+const graphMVPDataRoute = require("./routes/GraphMVPDataRoute");
 
 app.use("/api/expected-returns", expectedReturnsRoute);
 app.use("/api/expected-portfolio-returns", expectedPortfolioReturnsRoute);
@@ -21,6 +23,8 @@ app.use("/api/variance", varianceRoute);
 app.use("/api/standard-deviation", standardDeviationRoute);
 app.use("/api/portfolio-standard-deviation", portfolioStandardDeviationRoute);
 app.use("/api/portfolio-variance", portfolioVarianceRoute);
+app.use("/api/graph-data", graphDataRoute);
+app.use("/api/graph-mvp-data", graphMVPDataRoute);
 
 
 app.get("/", (req, res) => {

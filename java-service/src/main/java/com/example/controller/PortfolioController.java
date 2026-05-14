@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.dto.ExpectedReturnsPortfolioResponse;
 import com.example.dto.ExpectedReturnsResponse;
+import com.example.dto.GraphDataResponse;
+import com.example.dto.GraphMVPDataResponse;
 import com.example.dto.MVPResponse;
 import com.example.dto.STDVPortfolioResponse;
 import com.example.dto.StandardDeviationResponse;
@@ -260,5 +262,75 @@ public class PortfolioController {
                 
         
         return new MVPResponse(tickerArray, mvpWeights);
+    }
+    @GetMapping("/graph-data")
+    public GraphDataResponse getGraphData(
+        @RequestParam String ticker,
+        @RequestParam(defaultValue = "1mo") String interval
+    ) throws IOException {
+        String tickerArray[] = { ticker };
+        
+        double[][] prices = getPrices(tickerArray, interval);
+
+        double[][] returns =
+                LogarithmicReturnsCalculator.CalculatingReturnMatrix(prices);
+
+        double[] expected =
+                ExpMonthlyReturnsCalculator.ExpectedMonthlyReturns(returns);
+
+        double[] variance = 
+                VarianceCalculator.CalculatingVariance(returns, expected);
+        
+        double[] standardDeviation = 
+                StandardDeviationCalculator.CalculatingStockSTDV(variance);
+
+        //only one stock submitted at a time so if the express checks fail and more than one stock gets to this point 
+        //only return the data related to the first stock entered, LAST SANITY CHECK!
+        return new GraphDataResponse(expected[0], standardDeviation[0]);
+    }
+
+     @GetMapping("/graph-mvp-data")
+    public GraphMVPDataResponse getGraphMVPData(
+        @RequestParam String tickers,
+        @RequestParam(defaultValue = "1mo") String interval
+    ) throws IOException {
+        try{
+        String[] tickerArray = tickers.split(",");
+        
+        double[][] prices = getPrices(tickerArray, interval);
+
+        double[][] returns =
+                LogarithmicReturnsCalculator.CalculatingReturnMatrix(prices);
+
+        double[] expected =
+                ExpMonthlyReturnsCalculator.ExpectedMonthlyReturns(returns);
+
+        double[][] covMatrix  = 
+                CovarianceMatrixCalculator.varianceCovarianceMatrix(returns, expected);
+
+        Optimisation.Result result = 
+                MVPWeights.CalculatingMVPWeights(covMatrix);
+        
+        double[] mvpWeights = new double[covMatrix.length];
+        for (int i = 0; i < mvpWeights.length; i++) {
+                mvpWeights[i] = result.get(i).doubleValue();
+        } 
+
+        double portfolioVariance =
+                PortfolioVarianceCalculator.CalculatingPortfolioVariance(covMatrix, mvpWeights);
+
+        double portfolioStandardDeviation = 
+                PortfolioStandardDeviationCalculator.CalculatingPortfolioSTDV(portfolioVariance);
+
+        double portfolioReturn =
+                PortfolioReturnCalculator.CalculatingPortfolioReturn(expected, mvpWeights);
+
+
+        
+        return new GraphMVPDataResponse(portfolioReturn, portfolioStandardDeviation);
+        } catch (Exception e) {
+        e.printStackTrace();  
+        throw e;
+    }
     }
 }

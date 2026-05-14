@@ -140,6 +140,11 @@ form:hover {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
 }
+#graph-forms {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
 form h4 {
     margin-bottom: 6px;
     font-size: 14px;
