@@ -26,18 +26,7 @@
                 <input id="tickers-input" placeholder="AAPL,MSFT,GOOGL">
                 <button id="submit-btn">Submit</button>
                 <div id="expected-returns-response"></div>
-            </form>
-             
-            <form id="expected-portfolio-returns-form">
-                <h4>Stock Expected Portfolio Return</h4>
-                <label for="portfolio-returns-tickers-input">Enter Stock Tickers</label>
-                <input id="portfolio-returns-tickers-input" placeholder="AAPL,MSFT,GOOGL">
-                <label for="portfolio-returns-proportions-input">Enter Amount Invested</label>
-                <input id="portfolio-returns-proportions-input" placeholder="1000,2000,30000">
-                <button id="submit-btn">Submit</button>
-                <div id="expected-portfolio-returns-response"></div>
-            </form>
-            
+            </form>            
             
             <form id="mvp-form">
                 <h4>Minimum Variance Portfolio Weights</h4>
@@ -62,12 +51,23 @@
                 <button id="standard-deviation-submit-btn">Submit</button>
                 <div id="standard-deviation-response"></div>
             </form>
+
+            <form id="expected-portfolio-returns-form">
+                <h4>Expected Portfolio Return</h4>
+                <label for="portfolio-returns-tickers-input">Enter Stock Tickers</label>
+                <input id="portfolio-returns-tickers-input" placeholder="AAPL,MSFT,GOOGL">
+                <label for="portfolio-returns-proportions-input">Enter Amount Invested</label>
+                <input id="portfolio-returns-proportions-input" placeholder="1000,2000,30000">
+                <button id="submit-btn">Submit</button>
+                <div id="expected-portfolio-returns-response"></div>
+            </form>
             
         </section>
+        <canvas id="riskReturnChart"></canvas>
          
 
     </main>
-    <script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js">
        document.getElementById("expected-returns-form").addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -98,11 +98,31 @@
         }
 
         const data = await response.json();
-
+       
+        const combined = data.tickers.map((ticker, i) => {
+            return {
+                ticker: ticker,
+                expectedReturns: Number((data.expectedReturns[i] * 100).toFixed(2))
+            };
+        });
         
-        document.getElementById("expected-returns-response").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        const responseDiv = document.getElementById("expected-returns-response");
+         responseDiv.innerHTML = `
+            <div class="metric-card">
+                <p>Monthly Expected Returns</p>
+                ${combined.map(item => `
+                    <div class="metric-card-row">
+                        <span>${item.ticker}:</span>
+                        <span>${item.expectedReturns}%</span>
+                    </div>
+                `).join("")}
+                <button class="close-btn">Close Results</button>
+            </div>
+        `;
 
-
+        responseDiv.querySelector(".close-btn").addEventListener("click", () => {
+            responseDiv.innerHTML = "";
+        });
 
     } catch (err) {
         console.error(err);
@@ -139,10 +159,30 @@ document.getElementById("mvp-form").addEventListener("submit", async (e) => {
 
         const data = await response.json();
 
-        
-        document.getElementById("mvp-response").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        const combined = data.tickers.map((ticker, i) => {
+            return {
+                ticker: ticker,
+                weight: Number(data.weights[i].toFixed(2))
+            };
+        });
+        const responseDiv = document.getElementById("mvp-response");
 
+        responseDiv.innerHTML = `
+            <div class="metric-card">
+                <p>Weights</p>
+                ${combined.map(item => `
+                    <div class="metric-card-row">
+                        <span>${item.ticker}:</span>
+                        <span>${item.weight}</span>
+                    </div>
+                `).join("")}
+                <button class="close-btn">Close Results</button>
+            </div>
+        `;
 
+        responseDiv.querySelector(".close-btn").addEventListener("click", () => {
+            responseDiv.innerHTML = "";
+        });
 
     } catch (err) {
         console.error(err);
@@ -179,8 +219,31 @@ document.getElementById("variance-form").addEventListener("submit", async (e) =>
 
         const data = await response.json();
 
+        const combined = data.tickers.map((ticker, i) => {
+            return {
+                ticker: ticker,
+                variance: Number((data.variance[i] * 100).toFixed(2))
+            };
+        });
+
+        const responseDiv = document.getElementById("variance-response");
         
-        document.getElementById("variance-response").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        responseDiv.innerHTML = `
+            <div class="metric-card">
+                <p>Variance</p>
+                ${combined.map(item => `
+                    <div class="metric-card-row">
+                        <span>${item.ticker}:</span>
+                        <span>${item.variance}%</span>
+                    </div>
+                `).join("")}
+                <button class="close-btn">Close Results</button>
+            </div>
+        `;
+
+        responseDiv.querySelector(".close-btn").addEventListener("click", () => {
+            responseDiv.innerHTML = "";
+        });
 
 
 
@@ -219,8 +282,32 @@ document.getElementById("standard-deviation-form").addEventListener("submit", as
 
         const data = await response.json();
 
+        const combined = data.tickers.map((ticker, i) => {
+            return {
+                ticker: ticker,
+                standardDeviation: Number((data.standardDeviation[i] * 100).toFixed(2))
+            };
+        });
+
         
-        document.getElementById("standard-deviation-response").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        const responseDiv = document.getElementById("standard-deviation-response");
+        
+        responseDiv.innerHTML = `
+            <div class="metric-card">
+                <p>Standard Deviation</p>
+                ${combined.map(item => `
+                    <div class="metric-card-row">
+                        <span>${item.ticker}:</span>
+                        <span>${item.standardDeviation}%</span>
+                    </div>
+                `).join("")}
+                <button class="close-btn">Close Results</button>
+            </div>
+        `;
+
+        responseDiv.querySelector(".close-btn").addEventListener("click", () => {
+            responseDiv.innerHTML = "";
+        });
 
 
 
@@ -274,9 +361,25 @@ document.getElementById("expected-portfolio-returns-form").addEventListener("sub
 
         const data = await response.json();
 
-        
-        document.getElementById("expected-portfolio-returns-response").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        const combined = Number((data.expectedReturns * 100).toFixed(2));
 
+        const responseDiv = document.getElementById("expected-portfolio-returns-response");
+        
+        responseDiv.innerHTML = `
+            <div class="metric-card">
+                <p>Expected Monthly Return</p>
+
+                <div class="metric-card-row">
+                    <span>${combined}%</span>
+                </div>
+
+                <button class="close-btn">Close Results</button>
+            </div>
+        `;
+
+        responseDiv.querySelector(".close-btn").addEventListener("click", () => {
+            responseDiv.innerHTML = "";
+        });
 
 
     } catch (err) {
@@ -285,6 +388,7 @@ document.getElementById("expected-portfolio-returns-form").addEventListener("sub
         return;
     }
 });
+
     </script>
     <footer>
         <p>Email: Joshua.Reynolds.2024@mumail.ie  </p>
