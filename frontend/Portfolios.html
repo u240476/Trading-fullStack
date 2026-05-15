@@ -22,22 +22,23 @@
     <main>
         <section id="hero">
             <div>
-                <h1>Stock Analytics Dashboard</h1>
+                <h1>Portfolio Analytics Dashboard</h1>
 
                 <p>
-                    Analyze expected returns, risk metrics,
-                    minimum variance portfolios and tangency portfolios.
+                    Analyze expected returns and risk metrics for your portfolio.
+                </p>
+
+                <p>
+                    If you are investing and you want to better understand what to expect from your investment,
+                    input your securites and the amount that you have invested in each security
+                    to see your investments financial metrics.
                 </p>
 
                 <ul>
-                    <li>Expected return & variance</li>
-                    <li>Portfolio optimization</li>
+                    <li>Expected return, variance & standard deviation</li>
+                    <li>Portfolio Creation</li>
                     <li>Risk/return comparison</li>
                 </ul>
-                <div id="yahoo-link">
-                    <h3> To look up the ticker of a security or browse securities you would like to invest in visit Yahoo Finance</h3>
-                    <a href="https://finance.yahoo.com/">https://finance.yahoo.com/</a>
-                </div>
 
             </div>
         </section>
@@ -53,12 +54,32 @@
                 <button id="portfolio-returns-submit-btn">Submit</button>
                 <div id="expected-portfolio-returns-response"></div>
             </form>
+
+            <form id="portfolio-variance-form">
+                <h4>Portfolio Variance</h4>
+                <label for="portfolio-variance-tickers-input">Enter Stock Tickers</label>
+                <input id="portfolio-variance-tickers-input" placeholder="AAPL,MSFT,GOOGL">
+                <label for="portfolio-variance-proportions-input">Enter Amount Invested</label>
+                <input id="portfolio-variance-proportions-input" placeholder="1000,2000,30000">
+                <button id="portfolio-variance-submit-btn">Submit</button>
+                <div id="portfolio-variance-response"></div>
+            </form>
+
+            <form id="portfolio-standard-deviation-form">
+                <h4>Portfolio Standard Deviation</h4>
+                <label for="portfolio-standard-deviation-tickers-input">Enter Stock Tickers</label>
+                <input id="portfolio-standard-deviation-tickers-input" placeholder="AAPL,MSFT,GOOGL">
+                <label for="portfolio-standard-deviation-proportions-input">Enter Amount Invested</label>
+                <input id="portfolio-standard-deviation-proportions-input" placeholder="1000,2000,30000">
+                <button id="portfolio-standard-deviation-submit-btn">Submit</button>
+                <div id="portfolio-standard-deviation-response"></div>
+            </form>
+
             
         </section>
     
     </main>
-    <script alt="Portfolios.js"></script>
-    </script>
+    <script src="Portfolio.js"></script>
     <footer>
         <p>Email: Joshua.Reynolds.2024@mumail.ie  </p>
         <a href="https://www.linkedin.com/in/joshua-reynolds-b55642256" id="linkedin-link">LinkedIn</a>

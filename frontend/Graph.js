@@ -1,6 +1,5 @@
-document.addEventListener("DOMContentLoaded", () => {
 
-    const portfolioData = [];
+document.addEventListener("DOMContentLoaded", () => {
 
     const ctx = document.getElementById("riskReturnChart");
 
@@ -20,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     callbacks: {
                         label: function (context) {
                             const p = context.raw;
+
                             return `${p.ticker}: Return ${p.y.toFixed(2)}%, Risk ${p.x.toFixed(2)}%`;
                         }
                     }
@@ -46,9 +46,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    function parseCSV(input) {
+        return input
+            .split(/[\s,]+/)
+            .map(x => x.trim())
+            .filter(Boolean);
+    }
 
-    
-    function updateChart(datasetIndex, x, y, label) {
+    function clearInputs(ids) {
+        ids.forEach(id => {
+            document.getElementById(id).value = "";
+        });
+    }
+
+    function addPoint(datasetIndex, x, y, label) {
         chart.data.datasets[datasetIndex].data.push({
             x,
             y,
@@ -58,206 +69,183 @@ document.addEventListener("DOMContentLoaded", () => {
         chart.update();
     }
 
-    function clearInputs(ids) {
-        ids.forEach(id => {
-            document.getElementById(id).value = "";
-        });
+    function validateInput(input) {
+        return input && input.trim() !== "";
     }
 
+    document.getElementById("clear-graph-button")
+        .addEventListener("click", () => {
 
-    document.getElementById("clear-graph-button").addEventListener("click", () => {
+            chart.data.datasets.forEach(d => {
+                d.data = [];
+            });
 
-        chart.data.datasets.forEach(d => d.data = []);
-        portfolioData.length = 0;
-
-        chart.update();
-    });
-
-
-    document.getElementById("graph-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const ticker = document.getElementById("graph-ticker-input")
-            .value
-            .trim()
-            .toUpperCase();
-
-        if (!ticker || ticker.includes(",")) {
-            alert("Please enter only ONE ticker.");
-            return;
-        }
-
-        try {
-            const res = await fetch(
-                `http://localhost:3010/api/graph-data?ticker=${ticker}`
-            );
-
-            const data = await res.json();
-
-            const stock = {
-                ticker,
-                expectedReturn: data.expectedReturn * 100,
-                standardDeviation: data.standardDeviation * 100
-            };
-
-            portfolioData.push(stock);
-
-            updateChart(
-                0,
-                stock.standardDeviation,
-                stock.expectedReturn,
-                stock.ticker
-            );
-
-            clearInputs(["graph-ticker-input"]);
-
-        } catch (err) {
-            console.error(err);
-        }
-    });
-
-
-   
-    document.getElementById("graph-mvp-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const tickers = document.getElementById("graph-mvp-tickers-input")
-            .value
-            .trim()
-            .toUpperCase();
-
-        if (!tickers) {
-            alert("Please enter tickers.");
-            return;
-        }
-
-        try {
-            const res = await fetch(
-                `http://localhost:3010/api/graph-mvp-data?tickers=${tickers}`
-            );
-
-            if (!res.ok) throw new Error(await res.text());
-
-            const data = await res.json();
-
-            const point = {
-                portfolioReturn: data.portfolioReturn * 100,
-                portfolioStandardDeviation: data.portfolioStandardDeviation * 100
-            };
-
-            portfolioData.push(point);
-
-            updateChart(
-                1,
-                point.portfolioStandardDeviation,
-                point.portfolioReturn,
-                "MVP"
-            );
-
-            clearInputs(["graph-mvp-tickers-input"]);
-
-        } catch (err) {
-            console.error(err);
-        }
-    });
-
-
-    document.getElementById("graph-tp-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const tickers = document.getElementById("graph-tp-tickers-input")
-            .value
-            .trim()
-            .toUpperCase();
-
-        if (!tickers) {
-            alert("Please enter tickers.");
-            return;
-        }
-
-        try {
-            const res = await fetch(
-                `http://localhost:3010/api/graph-tp-data?tickers=${tickers}`
-            );
-
-            if (!res.ok) throw new Error(await res.text());
-
-            const data = await res.json();
-
-            const point = {
-                portfolioReturn: data.portfolioReturn * 100,
-                portfolioStandardDeviation: data.portfolioStandardDeviation * 100
-            };
-
-            portfolioData.push(point);
-
-            updateChart(
-                2,
-                point.portfolioStandardDeviation,
-                point.portfolioReturn,
-                "TP"
-            );
-
-            clearInputs(["graph-tp-tickers-input"]);
-
-        } catch (err) {
-            console.error(err);
-        }
-    });
-
-
-    document.getElementById("graph-portfolio-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const tickers = document.getElementById("graph-portfolio-tickers-input")
-            .value
-            .trim()
-            .split(",")
-            .map(t => t.trim());
-
-        const proportions = document.getElementById("graph-portfolio-proportions-input")
-            .value
-            .trim()
-            .split(",")
-            .map(n => n.trim());
-
-        if (!tickers.length || !proportions.length) {
-            alert("Please enter valid portfolio data.");
-            return;
-        }
-
-        const params = new URLSearchParams({
-            tickers: tickers.join(","),
-            proportions: proportions.join(",")
+            chart.update();
         });
 
-        try {
-            const res = await fetch(
-                `http://localhost:3010/api/graph-portfolio-data?${params.toString()}`
-            );
+    function setupGraphForm({
+        formId,
+        endpoint,
+        datasetIndex,
+        label,
+        inputIds,
+        buildParams,
+        mapData,
+        clearIds
+    }) {
 
-            const data = await res.json();
+        document.getElementById(formId)
+            .addEventListener("submit", async (e) => {
 
-            const point = {
-                portfolioReturn: data.portfolioReturn * 100,
-                portfolioStandardDeviation: data.portfolioStandardDeviation * 100
-            };
+                e.preventDefault();
 
-            updateChart(
-                3,
-                point.portfolioStandardDeviation,
-                point.portfolioReturn,
-                "Your Portfolio"
-            );
+                const values = inputIds.map(id =>
+                    document.getElementById(id).value.trim()
+                );
 
-            clearInputs([
-                "graph-portfolio-tickers-input",
-                "graph-portfolio-proportions-input"
-            ]);
+                if (values.some(v => !validateInput(v))) {
+                    alert("Please enter all required fields.");
+                    return;
+                }
 
-        } catch (err) {
-            console.error(err);
-        }
+                try {
+
+                    const params = buildParams(values);
+
+                    const res = await fetch(
+                        `${endpoint}?${params.toString()}`
+                    );
+
+                    if (!res.ok) {
+                        throw new Error(await res.text());
+                    }
+
+                    const data = await res.json();
+
+                    const point = mapData(data, values);
+
+                    addPoint(
+                        datasetIndex,
+                        point.x,
+                        point.y,
+                        point.label
+                    );
+
+                    clearInputs(clearIds);
+
+                } catch (err) {
+                    console.error(err);
+                }
+            });
+    }
+
+    setupGraphForm({
+        formId: "graph-form",
+
+        endpoint: "http://localhost:3010/api/graph-data",
+
+        datasetIndex: 0,
+
+        label: "Stock",
+
+        inputIds: ["graph-ticker-input"],
+
+        buildParams: ([ticker]) =>
+            new URLSearchParams({
+                ticker: ticker.toUpperCase()
+            }),
+
+        mapData: (data, [ticker]) => ({
+            x: data.standardDeviation * 100,
+            y: data.expectedReturn * 100,
+            label: ticker.toUpperCase()
+        }),
+
+        clearIds: ["graph-ticker-input"]
+    });
+
+    setupGraphForm({
+        formId: "graph-mvp-form",
+
+        endpoint: "http://localhost:3010/api/graph-mvp-data",
+
+        datasetIndex: 1,
+
+        label: "MVP",
+
+        inputIds: ["graph-mvp-tickers-input"],
+
+        buildParams: ([tickers]) =>
+            new URLSearchParams({
+                tickers: parseCSV(tickers).join(",")
+            }),
+
+        mapData: (data) => ({
+            x: data.portfolioStandardDeviation * 100,
+            y: data.portfolioReturn * 100,
+            label: "MVP"
+        }),
+
+        clearIds: ["graph-mvp-tickers-input"]
+    });
+
+
+    setupGraphForm({
+        formId: "graph-tp-form",
+
+        endpoint: "http://localhost:3010/api/graph-tp-data",
+
+        datasetIndex: 2,
+
+        label: "TP",
+
+        inputIds: ["graph-tp-tickers-input"],
+
+        buildParams: ([tickers]) =>
+            new URLSearchParams({
+                tickers: parseCSV(tickers).join(",")
+            }),
+
+        mapData: (data) => ({
+            x: data.portfolioStandardDeviation * 100,
+            y: data.portfolioReturn * 100,
+            label: "TP"
+        }),
+
+        clearIds: ["graph-tp-tickers-input"]
+    });
+
+
+    setupGraphForm({
+        formId: "graph-portfolio-form",
+
+        endpoint: "http://localhost:3010/api/graph-portfolio-data",
+
+        datasetIndex: 3,
+
+        label: "Your Portfolio",
+
+        inputIds: [
+            "graph-portfolio-tickers-input",
+            "graph-portfolio-proportions-input"
+        ],
+
+        buildParams: ([tickers, proportions]) =>
+            new URLSearchParams({
+                tickers: parseCSV(tickers).join(","),
+                proportions: parseCSV(proportions).join(",")
+            }),
+
+        mapData: (data) => ({
+            x: data.portfolioStandardDeviation * 100,
+            y: data.portfolioReturn * 100,
+            label: "Your Portfolio"
+        }),
+
+        clearIds: [
+            "graph-portfolio-tickers-input",
+            "graph-portfolio-proportions-input"
+        ]
     });
 
 });

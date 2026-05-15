@@ -9,7 +9,6 @@
 </head>
 <body>
     <header>
-        
     </header>
     <nav> 
             <a href="main.html">Main</a> 
@@ -25,15 +24,29 @@
                 <h1>Stock Analytics Dashboard</h1>
 
                 <p>
-                    Analyze expected returns, risk metrics,
-                    minimum variance portfolios and tangency portfolios.
+                    Analyze expected returns and risk metrics for individual securities
                 </p>
 
+                <p>
+                    This page will help you understand the financial metrics of different securities,
+                    this will help you on your investment journey through a better understanding of how
+                    how these securities are expected to perform.
+                </p>
+
+                <p>
+                    Feel free to explore our other pages and features avaliable on this website and if you are new 
+                    to investing or are unsure about any of the terminology used, check out are terminology page
+                    which includes all of the definitions that you need to know.
+                </p>
+
+                
                 <ul>
-                    <li>Expected return & variance</li>
-                    <li>Portfolio optimization</li>
+                    <li>Expected return, variance & standard deviation</li>
+                    <li>Investment optimization</li>
                     <li>Risk/return comparison</li>
                 </ul>
+
+
                 <div id="yahoo-link">
                     <h3> To look up the ticker of a security or browse securities you would like to invest in visit Yahoo Finance</h3>
                     <a href="https://finance.yahoo.com/">https://finance.yahoo.com/</a>
@@ -49,22 +62,6 @@
                 <button id="submit-btn">Submit</button>
                 <div id="expected-returns-response"></div>
             </form>            
-            
-            <form id="mvp-form">
-                <h4>Minimum Variance Portfolio Weights</h4>
-                <label for="mvp-tickers-input">Enter Stock Tickers</label>
-                <input id="mvp-tickers-input" placeholder="AAPL,MSFT,GOOGL">
-                <button id="mvp-submit-btn">Submit</button>
-                <div id="mvp-response"></div>
-            </form>
-
-            <form id="tp-form">
-                <h4>Tangency Portfolio Weights</h4>
-                <label for="tp-tickers-input">Enter Stock Tickers</label>
-                <input id="tp-tickers-input" placeholder="AAPL,MSFT,GOOGL">
-                <button id="tp-submit-btn">Submit</button>
-                <div id="tp-response"></div>
-            </form>
             
             <form id="variance-form">
                 <h4>Stock Variance</h4>
@@ -82,404 +79,13 @@
                 <div id="standard-deviation-response"></div>
             </form>
 
-            <form id="expected-portfolio-returns-form">
-                <h4>Expected Portfolio Return</h4>
-                <label for="portfolio-returns-tickers-input">Enter Stock Tickers</label>
-                <input id="portfolio-returns-tickers-input" placeholder="AAPL,MSFT,GOOGL">
-                <label for="portfolio-returns-proportions-input">Enter Amount Invested</label>
-                <input id="portfolio-returns-proportions-input" placeholder="1000,2000,30000">
-                <button id="portfolio-returns-submit-btn">Submit</button>
-                <div id="expected-portfolio-returns-response"></div>
-            </form>
+            
             
         </section>
     
     </main>
     
-    <script>
-
-    document.getElementById("expected-returns-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-    const input = document.getElementById("tickers-input").value;
-
-    const tickersOg = input
-    .split(",")
-    .map(t => t.trim())
-    .filter(Boolean);
-
-    const tickers = [...new Set(tickersOg)];
-
-    if(tickers.length === 0){
-        document.getElementById("expected-returns-response").innerHTML = `<p style="color: red;">Error: ${"you must enter all fields"}</p>`;
-        return;
-    }
-
-
-    const query = new URLSearchParams({
-        tickers: tickers.join(",")
-    });
-
-    try {
-        const response = await fetch(`http://localhost:3010/api/expected-returns?${query}`);
-
-        if (!response.ok) {
-            throw new Error("Server error");
-        }
-
-        const data = await response.json();
-       
-        const combined = data.tickers.map((ticker, i) => {
-            return {
-                ticker: ticker,
-                expectedReturns: Number((data.expectedReturns[i] * 100).toFixed(2))
-            };
-        });
-        
-        const responseDiv = document.getElementById("expected-returns-response");
-         responseDiv.innerHTML = `
-            <div class="metric-card">
-                <p>Monthly Expected Returns</p>
-                ${combined.map(item => `
-                    <div class="metric-card-row">
-                        <span>${item.ticker}:</span>
-                        <span>${item.expectedReturns}%</span>
-                    </div>
-                `).join("")}
-                <button class="close-btn">Close Results</button>
-            </div>
-        `;
-
-        responseDiv.querySelector(".close-btn").addEventListener("click", () => {
-            responseDiv.innerHTML = "";
-        });
-
-    } catch (err) {
-        console.error(err);
-        document.getElementById("expected-returns-response").innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
-    }
-});
-document.getElementById("mvp-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-    const input = document.getElementById("mvp-tickers-input").value;
-
-    const tickersOg = input
-    .split(",")
-    .map(t => t.trim())
-    .filter(Boolean);
-
-    const tickers = [...new Set(tickersOg)]; 
-    
-    if(tickers.length === 0){
-        document.getElementById("mvp-response").innerHTML = `<p style="color: red;">Error: ${"you must enter all fields"}</p>`;
-        return;
-    }
-
-    const query = new URLSearchParams({
-        tickers: tickers.join(",")
-    });
-
-    try {
-        const response = await fetch(`http://localhost:3010/api/mvp?${query}`);
-
-        if (!response.ok) {
-            throw new Error("Server error");
-        }
-
-        const data = await response.json();
-
-        const combined = data.tickers.map((ticker, i) => {
-            return {
-                ticker: ticker,
-                weight: Number(data.weights[i].toFixed(2))
-            };
-        });
-        const responseDiv = document.getElementById("mvp-response");
-
-        responseDiv.innerHTML = `
-            <div class="metric-card">
-                <p>Weights</p>
-                ${combined.map(item => `
-                    <div class="metric-card-row">
-                        <span>${item.ticker}:</span>
-                        <span>${item.weight}</span>
-                    </div>
-                `).join("")}
-                <button class="close-btn">Close Results</button>
-            </div>
-        `;
-
-        responseDiv.querySelector(".close-btn").addEventListener("click", () => {
-            responseDiv.innerHTML = "";
-        });
-
-    } catch (err) {
-        console.error(err);
-        document.getElementById("mvp-response").innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
-    }
-});
-document.getElementById("tp-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-    const input = document.getElementById("tp-tickers-input").value;
-
-    const tickersOg = input
-    .split(",")
-    .map(t => t.trim())
-    .filter(Boolean);
-
-    const tickers = [...new Set(tickersOg)]; 
-    
-    if(tickers.length === 0){
-        document.getElementById("tp-response").innerHTML = `<p style="color: red;">Error: ${"you must enter all fields"}</p>`;
-        return;
-    }
-
-    const query = new URLSearchParams({
-        tickers: tickers.join(",")
-    });
-
-    try {
-        const response = await fetch(`http://localhost:3010/api/tp?${query}`);
-
-        if (!response.ok) {
-            throw new Error("Server error");
-        }
-
-        const data = await response.json();
-
-        const combined = data.tickers.map((ticker, i) => {
-            return {
-                ticker: ticker,
-                weight: Number(data.weights[i].toFixed(2))
-            };
-        });
-        const responseDiv = document.getElementById("tp-response");
-
-        responseDiv.innerHTML = `
-            <div class="metric-card">
-                <p>Weights</p>
-                ${combined.map(item => `
-                    <div class="metric-card-row">
-                        <span>${item.ticker}:</span>
-                        <span>${item.weight}</span>
-                    </div>
-                `).join("")}
-                <button class="close-btn">Close Results</button>
-            </div>
-        `;
-
-        responseDiv.querySelector(".close-btn").addEventListener("click", () => {
-            responseDiv.innerHTML = "";
-        });
-
-    } catch (err) {
-        console.error(err);
-        document.getElementById("tp-response").innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
-    }
-});
-document.getElementById("variance-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-    const input = document.getElementById("variance-tickers-input").value;
-
-    const tickersOg = input
-    .split(",")
-    .map(t => t.trim())
-    .filter(Boolean);
-
-    const tickers = [...new Set(tickersOg)];
-    
-    if(tickers.length === 0){
-        document.getElementById("variance-response").innerHTML = `<p style="color: red;">Error: ${"you must enter all fields"}</p>`;
-        return;
-    }
-
-    const query = new URLSearchParams({
-        tickers: tickers.join(",")
-    });
-
-    try {
-        const response = await fetch(`http://localhost:3010/api/variance?${query}`);
-
-        if (!response.ok) {
-            throw new Error("Server error");
-        }
-
-        const data = await response.json();
-
-        const combined = data.tickers.map((ticker, i) => {
-            return {
-                ticker: ticker,
-                variance: Number((data.variance[i] * 100).toFixed(2))
-            };
-        });
-
-        const responseDiv = document.getElementById("variance-response");
-        
-        responseDiv.innerHTML = `
-            <div class="metric-card">
-                <p>Variance</p>
-                ${combined.map(item => `
-                    <div class="metric-card-row">
-                        <span>${item.ticker}:</span>
-                        <span>${item.variance}%</span>
-                    </div>
-                `).join("")}
-                <button class="close-btn">Close Results</button>
-            </div>
-        `;
-
-        responseDiv.querySelector(".close-btn").addEventListener("click", () => {
-            responseDiv.innerHTML = "";
-        });
-
-
-
-    } catch (err) {
-        console.error(err);
-        document.getElementById("variance-response").innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
-    }
-});
-document.getElementById("standard-deviation-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-    const input = document.getElementById("standard-deviation-tickers-input").value;
-
-    const tickersOg = input
-    .split(",")
-    .map(t => t.trim())
-    .filter(Boolean);
-
-    const tickers = [...new Set(tickersOg)]; 
-    
-    if(tickers.length === 0){
-        document.getElementById("standard-deviation-response").innerHTML = `<p style="color: red;">Error: ${"you must enter all fields"}</p>`;
-        return;
-    }
-
-    const query = new URLSearchParams({
-        tickers: tickers.join(",")
-    });
-
-    try {
-        const response = await fetch(`http://localhost:3010/api/standard-deviation?${query}`);
-
-        if (!response.ok) {
-            throw new Error("Server error");
-        }
-
-        const data = await response.json();
-
-        const combined = data.tickers.map((ticker, i) => {
-            return {
-                ticker: ticker,
-                standardDeviation: Number((data.standardDeviation[i] * 100).toFixed(2))
-            };
-        });
-
-        
-        const responseDiv = document.getElementById("standard-deviation-response");
-        
-        responseDiv.innerHTML = `
-            <div class="metric-card">
-                <p>Standard Deviation</p>
-                ${combined.map(item => `
-                    <div class="metric-card-row">
-                        <span>${item.ticker}:</span>
-                        <span>${item.standardDeviation}%</span>
-                    </div>
-                `).join("")}
-                <button class="close-btn">Close Results</button>
-            </div>
-        `;
-
-        responseDiv.querySelector(".close-btn").addEventListener("click", () => {
-            responseDiv.innerHTML = "";
-        });
-
-
-
-    } catch (err) {
-        console.error(err);
-        document.getElementById("standard-deviation-response").innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
-    }
-});
-document.getElementById("expected-portfolio-returns-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-    const input1 = document.getElementById("portfolio-returns-tickers-input").value;
-    const input2 = document.getElementById("portfolio-returns-proportions-input").value;
-
-    const tickersOg = input1
-    .split(",")
-    .map(t => t.trim())
-    .filter(Boolean);
-
-    const tickers = [...new Set(tickersOg)]; 
-
-    if(tickers.length === 0){
-        document.getElementById("expected-portfolio-returns-response").innerHTML = `<p style="color: red;">Error: ${"you must enter all fields"}</p>`;
-        return;
-    }
-
-    const proportionsOg = input2
-    .split(",")
-    .map(t => t.trim())
-    .filter(Boolean);
-
-    const proportions = [...new Set(proportionsOg)]; 
-
-    if(proportions.length !== tickers.length){
-        document.getElementById("expected-portfolio-returns-response").innerHTML = `<p style="color: red;">Error: ${"must have one amount invested per ticker"}</p>`;
-        return;
-    }
-    
-
-    const query = new URLSearchParams({
-        tickers: tickers.join(","),
-        proportions: proportions.join(",")
-    });
-
-    try {
-        const response = await fetch(`http://localhost:3010/api/expected-portfolio-returns?${query}`);
-
-        if (!response.ok) {
-            throw new Error("Server error");
-        }
-
-        const data = await response.json();
-
-        const combined = Number((data.expectedReturns * 100).toFixed(2));
-
-        const responseDiv = document.getElementById("expected-portfolio-returns-response");
-        
-        responseDiv.innerHTML = `
-            <div class="metric-card">
-                <p>Expected Monthly Return</p>
-
-                <div class="metric-card-row">
-                    <span>${combined}%</span>
-                </div>
-
-                <button class="close-btn">Close Results</button>
-            </div>
-        `;
-
-        responseDiv.querySelector(".close-btn").addEventListener("click", () => {
-            responseDiv.innerHTML = "";
-        });
-
-
-    } catch (err) {
-        console.error(err);
-        document.getElementById("expected-portfolio-returns-response").innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
-        return;
-    }
-});
-
-    </script>
+    <script src="main.js"></script>
     <footer>
         <p>Email: Joshua.Reynolds.2024@mumail.ie  </p>
         <a href="https://www.linkedin.com/in/joshua-reynolds-b55642256" id="linkedin-link">LinkedIn</a>

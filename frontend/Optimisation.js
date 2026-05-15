@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderWeights(container, data) {
         const combined = data.tickers.map((ticker, i) => ({
             ticker,
-            weight: Number(data.weights[i].toFixed(2)*100)
+            weight: Number((data.weights[i] * 100).toFixed(2))
         }));
 
         container.innerHTML = `
