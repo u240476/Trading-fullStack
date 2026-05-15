@@ -5,21 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>index</title>
     <link rel="stylesheet" href="styles.css">
-    <nav> 
-            <a href="main.html">Main</a> 
-            <a href="Graphs.html">Graphs</a> 
-            <a href="Terminology.html">Terminology</a>
-            <a href="About.html">About</a>
-    </nav>
+    
 </head>
 <body>
     <header>
-        <div id="yahoo-link">
-            <h3> To look up the ticker of a security or browse securities you would like to invest in visit Yahoo Finance</h3>
-            <a href="https://finance.yahoo.com/">https://finance.yahoo.com/</a>
-        </div>
+        
     </header>
+    <nav> 
+            <a href="main.html">Main</a> 
+            <a href="Portfolios.html">Portfolios</a>
+            <a href="Optimisation.html">Optimisation</a>
+            <a href="Graphs.html" class="active">Graphs</a> 
+            <a href="Terminology.html">Terminology</a>
+            <a href="About.html">About</a>
+    </nav>
     <main>
+        <section id="hero">
+            <div>
+                <h1>Stock Analytics Dashboard</h1>
+
+                <p>
+                    Analyze expected returns, risk metrics,
+                    minimum variance portfolios and tangency portfolios.
+                </p>
+
+                <ul>
+                    <li>Expected return & variance</li>
+                    <li>Portfolio optimization</li>
+                    <li>Risk/return comparison</li>
+                </ul>
+                <div id="yahoo-link">
+                    <h3> To look up the ticker of a security or browse securities you would like to invest in visit Yahoo Finance</h3>
+                    <a href="https://finance.yahoo.com/">https://finance.yahoo.com/</a>
+                </div>
+
+            </div>
+        </section>
         <section id="forms">
            <form id="expected-returns-form">
                 <h4>Expected Return</h4>
@@ -67,7 +88,7 @@
                 <input id="portfolio-returns-tickers-input" placeholder="AAPL,MSFT,GOOGL">
                 <label for="portfolio-returns-proportions-input">Enter Amount Invested</label>
                 <input id="portfolio-returns-proportions-input" placeholder="1000,2000,30000">
-                <button id="submit-btn">Submit</button>
+                <button id="portfolio-returns-submit-btn">Submit</button>
                 <div id="expected-portfolio-returns-response"></div>
             </form>
             
@@ -196,6 +217,66 @@ document.getElementById("mvp-form").addEventListener("submit", async (e) => {
     } catch (err) {
         console.error(err);
         document.getElementById("mvp-response").innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
+    }
+});
+document.getElementById("tp-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+    const input = document.getElementById("tp-tickers-input").value;
+
+    const tickersOg = input
+    .split(",")
+    .map(t => t.trim())
+    .filter(Boolean);
+
+    const tickers = [...new Set(tickersOg)]; 
+    
+    if(tickers.length === 0){
+        document.getElementById("tp-response").innerHTML = `<p style="color: red;">Error: ${"you must enter all fields"}</p>`;
+        return;
+    }
+
+    const query = new URLSearchParams({
+        tickers: tickers.join(",")
+    });
+
+    try {
+        const response = await fetch(`http://localhost:3010/api/tp?${query}`);
+
+        if (!response.ok) {
+            throw new Error("Server error");
+        }
+
+        const data = await response.json();
+
+        const combined = data.tickers.map((ticker, i) => {
+            return {
+                ticker: ticker,
+                weight: Number(data.weights[i].toFixed(2))
+            };
+        });
+        const responseDiv = document.getElementById("tp-response");
+
+        responseDiv.innerHTML = `
+            <div class="metric-card">
+                <p>Weights</p>
+                ${combined.map(item => `
+                    <div class="metric-card-row">
+                        <span>${item.ticker}:</span>
+                        <span>${item.weight}</span>
+                    </div>
+                `).join("")}
+                <button class="close-btn">Close Results</button>
+            </div>
+        `;
+
+        responseDiv.querySelector(".close-btn").addEventListener("click", () => {
+            responseDiv.innerHTML = "";
+        });
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById("tp-response").innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
     }
 });
 document.getElementById("variance-form").addEventListener("submit", async (e) => {

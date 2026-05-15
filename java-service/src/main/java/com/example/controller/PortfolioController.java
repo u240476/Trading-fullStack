@@ -16,8 +16,10 @@ import com.example.dto.GraphTPResponse;
 import com.example.dto.MVPResponse;
 import com.example.dto.STDVPortfolioResponse;
 import com.example.dto.StandardDeviationResponse;
+import com.example.dto.TPResponse;
 import com.example.dto.VariancePortfolioResponse;
 import com.example.dto.VarianceResponse;
+import com.example.dto.GraphPortfolioDataResponse;
 import com.example.math.CovarianceMatrixCalculator;
 import com.example.math.ExpMonthlyReturnsCalculator;
 import com.example.math.InverseMatrixCalculator;
@@ -186,6 +188,49 @@ public class PortfolioController {
 
         return new STDVPortfolioResponse(portfolioStandardDeviation);
     }
+    @GetMapping("/graph-portfolio-data")
+    public GraphPortfolioDataResponse getGraphPortfolioData(
+            @RequestParam String tickers,
+            @RequestParam(defaultValue = "1mo") String interval,
+            @RequestParam String proportions
+    ) throws IOException {
+
+        String[] tickerArray = tickers.split(",");
+        String[] proportionsStringArray = proportions.split(",");
+
+        int l = proportionsStringArray.length;
+
+        double[] proportionsArray = new double[l];
+        for(int i = 0; i<l; i++){
+                proportionsArray[i] = Double.parseDouble(proportionsStringArray[i]);
+        }
+
+        double[][] prices = getPrices(tickerArray, interval);
+
+        double[][] returns =
+                LogarithmicReturnsCalculator.CalculatingReturnMatrix(prices);
+
+        double[] expected =
+                ExpMonthlyReturnsCalculator.ExpectedMonthlyReturns(returns);
+
+        double[] weights =
+                UserPortfolioWeights.CalculatingUserWeights(proportionsArray);
+        
+        double[][] covMatrix  = 
+                CovarianceMatrixCalculator.varianceCovarianceMatrix(returns, expected);
+        
+        double portfolioVariance =
+                PortfolioVarianceCalculator.CalculatingPortfolioVariance(covMatrix, weights);
+
+        double portfolioStandardDeviation = 
+                PortfolioStandardDeviationCalculator.CalculatingPortfolioSTDV(portfolioVariance);
+        
+                double portfolioReturn =
+                PortfolioReturnCalculator.CalculatingPortfolioReturn(expected, weights);
+
+
+        return new GraphPortfolioDataResponse(portfolioReturn, portfolioStandardDeviation);
+    }
 
     @GetMapping("/variance")
     public VarianceResponse getVariance(
@@ -265,6 +310,32 @@ public class PortfolioController {
                 
         
         return new MVPResponse(tickerArray, mvpWeights);
+    }
+    @GetMapping("/tp")
+    public TPResponse getTP(
+        @RequestParam String tickers,
+        @RequestParam(defaultValue = "1mo") String interval
+    ) throws IOException {
+        String[] tickerArray = tickers.split(",");
+
+        double[][] prices = getPrices(tickerArray, interval);
+
+        double[][] returns =
+                LogarithmicReturnsCalculator.CalculatingReturnMatrix(prices);
+
+        double[] expected =
+                ExpMonthlyReturnsCalculator.ExpectedMonthlyReturns(returns);
+
+        double[][] covMatrix  = 
+                CovarianceMatrixCalculator.varianceCovarianceMatrix(returns, expected);
+
+        double[][] inverseMatrix =
+                InverseMatrixCalculator.pseudoInverse(covMatrix);
+        
+        double[] tpWeights =
+        //the 0.0025 is a placeholder for the average monthly return of a 3 year treasury bill it will be replaced by real data
+                TPWeights.CalculatingTangencyPortfolio(inverseMatrix, expected, 0.0025);
+                return new TPResponse(tickerArray, tpWeights);
     }
     @GetMapping("/graph-data")
     public GraphDataResponse getGraphData(
@@ -358,6 +429,7 @@ public class PortfolioController {
                 InverseMatrixCalculator.pseudoInverse(covMatrix);
         
         double[] tpWeights =
+        //the 0.0025 is a placeholder for the average monthly return of a 3 year treasury bill it will be replaced by real data
                 TPWeights.CalculatingTangencyPortfolio(inverseMatrix, expected, 0.0025);
                 
         double portfolioVariance =

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>index</title>
+    <link rel="stylesheet" href="styles.css">
+    
+</head>
+<body>
+    <header>
+        
+    </header>
+    <nav> 
+            <a href="main.html">Main</a> 
+            <a href="Portfolios.html">Portfolios</a>
+            <a href="Optimisation.html">Optimisation</a>
+            <a href="Graphs.html" class="active">Graphs</a> 
+            <a href="Terminology.html">Terminology</a>
+            <a href="About.html">About</a>
+    </nav>
+    <main>
+        <section id="hero">
+            <div>
+                <h1>Stock Analytics Dashboard</h1>
+
+                <p>
+                    Analyze expected returns, risk metrics,
+                    minimum variance portfolios and tangency portfolios.
+                </p>
+
+                <ul>
+                    <li>Expected return & variance</li>
+                    <li>Portfolio optimization</li>
+                    <li>Risk/return comparison</li>
+                </ul>
+                <div id="yahoo-link">
+                    <h3> To look up the ticker of a security or browse securities you would like to invest in visit Yahoo Finance</h3>
+                    <a href="https://finance.yahoo.com/">https://finance.yahoo.com/</a>
+                </div>
+
+            </div>
+        </section>
+        <section id="forms">          
+            
+
+            <form id="expected-portfolio-returns-form">
+                <h4>Expected Portfolio Return</h4>
+                <label for="portfolio-returns-tickers-input">Enter Stock Tickers</label>
+                <input id="portfolio-returns-tickers-input" placeholder="AAPL,MSFT,GOOGL">
+                <label for="portfolio-returns-proportions-input">Enter Amount Invested</label>
+                <input id="portfolio-returns-proportions-input" placeholder="1000,2000,30000">
+                <button id="portfolio-returns-submit-btn">Submit</button>
+                <div id="expected-portfolio-returns-response"></div>
+            </form>
+            
+        </section>
+    
+    </main>
+    <script alt="Portfolios.js"></script>
+    </script>
+    <footer>
+        <p>Email: Joshua.Reynolds.2024@mumail.ie  </p>
+        <a href="https://www.linkedin.com/in/joshua-reynolds-b55642256" id="linkedin-link">LinkedIn</a>
+    </footer>
+</body>
+</html>

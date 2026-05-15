@@ -5,14 +5,14 @@ router.get("/", async (req, res) => {
     try {
         const { tickers, proportions } = req.query;
 
-    const params = new URLSearchParams();
+        const params = new URLSearchParams({
+        tickers,
+        proportions
+        });
 
-    if (tickers) params.append("tickers", tickers);
-    if (proportions) params.append("proportions", proportions);
-
-    const response = await fetch(
-        `http://localhost:8080/portfolio-standard-deviation?${params.toString()}`
-    );
+        const response = await fetch(
+            `http://localhost:8080/graph-portfolio-data?${params.toString()}`
+        );
 
         const text = await response.text(); 
 

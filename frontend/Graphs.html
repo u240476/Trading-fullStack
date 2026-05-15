@@ -11,10 +11,35 @@
 <body>
     <nav> 
             <a href="main.html">Main</a> 
-            <a href="Graphs.html">Graphs</a> 
+            <a href="Portfolios.html">Portfolios</a>
+            <a href="Optimisation.html">Optimisation</a>
+            <a href="Graphs.html" class="active">Graphs</a> 
             <a href="Terminology.html">Terminology</a>
             <a href="About.html">About</a>
     </nav>
+    <main>
+    <section id="hero">
+            <div>
+                <h1>Graph Dashboard</h1>
+
+                <p>
+                    Visualise expected returns, risk metrics, minimum-variance portfolios,
+                    and tangency portfolios in an interactive analytics graph.
+                </p>
+
+                <p>
+                    Compare your portfolio against optimised allocations, explore different
+                    securities, and evaluate risk versus return performance.
+                </p>
+
+                <ul>
+                    <li>Expected return & volatility analysis</li>
+                    <li>Portfolio optimisation</li>
+                    <li>Risk vs. return comparison</li>
+                </ul>
+
+            </div>
+    </section>
     <section id="graph-forms">
             <form id="graph-form">
                 <h4>Graph a Securities Returns and Volatility</h4>
@@ -25,14 +50,21 @@
             <form id="graph-mvp-form">
                 <h4>Graph a MVP's Returns and Volatility</h4>
                 <label for="graph-mvp-tickers-input">Enter the Stocks to Build an MVP</label>
-                <input id="graph-mvp-tickers-input" placeholder="AAPL">
+                <input id="graph-mvp-tickers-input" placeholder="AAPL,MSFT,GOOGL">
                 <button>Generate Portfolio</button>
             </form>
             <form id="graph-tp-form">
-                <h4>Tangency Portfolio Weights</h4>
+                <h4>Graph a TP's Returns and Volatility</h4>
                 <label for="graph-tp-tickers-input">Enter Stock Tickers</label>
                 <input id="graph-tp-tickers-input" placeholder="AAPL,MSFT,GOOGL">
                 <button type="submit" id="graph-tp-submit-btn">Submit</button>
+            </form>
+            <form id="graph-portfolio-form">
+                <h4>Graph Your Own Portfolios Returns and Volatility</h4>
+                <label for="graph-portfolio-tickers-input">Enter Stock Tickers</label>
+                <input id="graph-portfolio-tickers-input" placeholder="AAPL,MSFT,GOOGL">
+                <input id="graph-portfolio-proportions-input" placeholder="1000,2000,3000">
+                <button type="submit" id="graph-portfolio-submit-btn">Submit</button>
             </form>
         </section>
          <canvas id="riskReturnChart"></canvas>
@@ -41,211 +73,13 @@
         
         
     </section>
+    </main>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const portfolioData = [];
-
-        const ctx = document.getElementById("riskReturnChart");
-
-        const chart = new Chart(ctx, {
-        type: "scatter",
-        data: {
-        datasets: [
-            {
-                label: "Stocks",
-                data: []
-            },
-            {
-                label: "Minimum Variance Portfolio",
-                data: [],
-                pointBackgroundColor: "green"
-            },
-            {
-                label: "Tangency Portfolio",
-                data: [],
-                pointBackgroundColor: "red"
-            }
-        ]
-        },
-        options: {
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-
-                        const point = context.raw;
-
-                        return `${point.ticker}: 
-                        Return ${point.y.toFixed(2)}%, 
-                        Risk ${point.x.toFixed(2)}%`;
-                    }
-                }
-            }
-        },
-            scales: {
-                x: {
-                    min:-10,
-                    max: 30,
-                    title: {
-                        display: true,
-                        text: "Standard Deviation (%)"
-                    }
-                },
-            y: {
-                min: -10,
-                max: 30,
-                title: {
-                    display: true,
-                    text: "Expected Return (%)"
-                }
-            }
-        }
-    }
-});
-        document.getElementById("clear-graph-button").addEventListener("click", () => {
-
-            chart.data.datasets[0].data = [];
-            chart.data.datasets[1].data = [];
-            chart.data.datasets[2].data = [];
-
-            portfolioData.length = 0;
-
-            chart.update();
-        });
-        document.getElementById("graph-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const ticker = document
-                .getElementById("graph-ticker-input")
-                .value
-                .trim()
-                .toUpperCase();
-
-            if (!ticker || ticker.includes(",")) {
-                alert("Please enter only ONE ticker.");
-                return;
-            }
-            try{
-            const response = await fetch(
-                `http://localhost:3010/api/graph-data?ticker=${ticker}`
-            );
-
-            const data = await response.json();
-
-            const stock = {
-                ticker: ticker,
-                expectedReturn: data.expectedReturn * 100,
-                standardDeviation: data.standardDeviation * 100
-            };
-
-            portfolioData.push(stock);
-
-            chart.data.datasets[0].data.push({
-            x: stock.standardDeviation,
-            y: stock.expectedReturn,
-            ticker: stock.ticker
-        });
-
-        chart.update();
-
-        document.getElementById("graph-ticker-input").value = "";
-        }catch(err){
-            console.error(err);
-        }
-            
-        });
-         document.getElementById("graph-mvp-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const tickers = document
-                .getElementById("graph-mvp-tickers-input")
-                .value
-                .trim()
-                .toUpperCase();
-
-            if (!tickers) {
-                alert("Please enter tickers.");
-                return;
-            }
-            try{
-            const response = await fetch(
-                `http://localhost:3010/api/graph-mvp-data?tickers=${tickers}`
-            );
-            if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(errText);
-}
-
-            const data = await response.json();
-
-            const stock = {
-                portfolioReturn: data.portfolioReturn * 100,
-                portfolioStandardDeviation: data.portfolioStandardDeviation * 100
-            };
-
-            portfolioData.push(stock);
-
-            chart.data.datasets[1].data.push({
-                x: stock.portfolioStandardDeviation,
-                y: stock.portfolioReturn,
-                ticker: "mvp"
-            });
-
-        chart.update();
-
-        document.getElementById("graph-mvp-tickers-input").value = "";
-        }catch(err){
-            console.error(err);
-        }
-            
-        });
-        document.getElementById("graph-tp-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const tickers = document
-                .getElementById("graph-tp-tickers-input")
-                .value
-                .trim()
-                .toUpperCase();
-
-            if (!tickers) {
-                alert("Please enter tickers.");
-                return;
-            }
-            try{
-            const response = await fetch(
-                `http://localhost:3010/api/graph-tp-data?tickers=${tickers}`
-            );
-            if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(errText);
-}
-
-            const data = await response.json();
-
-            const stock = {
-                portfolioReturn: data.portfolioReturn * 100,
-                portfolioStandardDeviation: data.portfolioStandardDeviation * 100
-            };
-
-            portfolioData.push(stock);
-
-            chart.data.datasets[2].data.push({
-                x: stock.portfolioStandardDeviation,
-                y: stock.portfolioReturn,
-                ticker: "tp"
-            });
-
-        chart.update();
-
-        document.getElementById("graph-tp-tickers-input").value = "";
-        }catch(err){
-            console.error(err);
-        }
-            
-        });
-
-    </script>
+    <script src="Graph.js"></script>
     <footer>
         <p>Email: Joshua.Reynolds.2024@mumail.ie  </p>
         <a href="https://www.linkedin.com/in/joshua-reynolds-b55642256" id="linkedin-link">LinkedIn</a>
     </footer>   
 </body>
 </html>
+

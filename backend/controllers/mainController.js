@@ -1,4 +1,5 @@
 
+/*
 exports.portfolioTickers = async (req,res) => {
     const { investedArray , tickerArray } = req.body;
     
@@ -78,3 +79,4 @@ exports.tangencyPortfolio = async (req, res) => {
 
 }
 
+*/
