@@ -6,6 +6,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
+
 const expectedReturnsRoute = require("./routes/ExpectedReturnsRoute");
 const expectedPortfolioReturnsRoute = require("./routes/ExpectedPortfolioReturnsRoute");
 const mvpWeightsRoute = require("./routes/MVPWeightsReturnsRoute");
@@ -18,6 +20,7 @@ const graphDataRoute = require("./routes/GraphDataRoute");
 const graphMVPDataRoute = require("./routes/GraphMVPDataRoute");
 const graphTPDataRoute = require("./routes/GraphTPDataRoute");
 const graphPortfolioDataRoute = require("./routes/GraphPortfolioDataRoute");
+const priceReturnRoute = require("./routes/PriceReturnRoute");
 
 app.use("/api/expected-returns", expectedReturnsRoute);
 app.use("/api/expected-portfolio-returns", expectedPortfolioReturnsRoute);
@@ -31,6 +34,7 @@ app.use("/api/graph-data", graphDataRoute);
 app.use("/api/graph-mvp-data", graphMVPDataRoute);
 app.use("/api/graph-tp-data", graphTPDataRoute);
 app.use("/api/graph-portfolio-data", graphPortfolioDataRoute);
+app.use("/api/price-data", priceReturnRoute);
 
 
 app.get("/", (req, res) => {

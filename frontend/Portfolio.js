@@ -1,4 +1,24 @@
 document.addEventListener("DOMContentLoaded", () => {
+    
+    function getInterval() {
+        const interval = document.getElementById("interval-btn").textContent.trim();
+        if(interval.toLowerCase() === "yearly"){
+            return 12;
+        }else{
+            return 1
+        }
+    }
+    document.getElementById("interval-btn").onclick = () => {
+        const interval = document.getElementById("interval-btn").textContent.trim().toLowerCase();
+
+        const display = document.getElementById("interval-btn-display");
+        if(interval === "monthly")
+
+            display.textContent = "Yearly";
+        else
+            display.textContent = "Monthly";
+
+    };
 
 
     function getTickersAndProportions(tickerInputId, propInputId) {
@@ -38,7 +58,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderResult(responseId, label, value) {
         const responseDiv = document.getElementById(responseId);
-
+        if(getInterval() === 12){
+            label = label.replace("Monthly", "Yearly");
+        }
         responseDiv.innerHTML = `
             <div class="metric-card">
                 <p>${label}</p>
@@ -86,8 +108,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!res.ok) throw new Error("Server error");
 
                 const data = await res.json();
+                var interval;
+                if(formId === "portfolio-standard-deviation-form")
+                    interval = Math.sqrt(getInterval());
+                else
+                    interval = getInterval();
 
-                const value = Number((data[responseKey] * multiplier).toFixed(2));
+
+                const value = Number((data[responseKey] * multiplier * interval).toFixed(2));
 
                 renderResult(responseId, label, value);
 

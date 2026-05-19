@@ -1,5 +1,24 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+    function getInterval() {
+        const interval = document.getElementById("interval-btn").textContent.trim();
+        if(interval.toLowerCase() === "yearly"){
+            return 12;
+        }else{
+            return 1
+        }
+    }
+    document.getElementById("interval-btn").onclick = () => {
+        const interval = document.getElementById("interval-btn").textContent.trim().toLowerCase();
+
+        const display = document.getElementById("interval-btn-display");
+        if(interval === "monthly")
+
+            display.textContent = "Yearly";
+        else
+            display.textContent = "Monthly";
+
+    };
 
     function getTickers(inputId) {
         
@@ -26,7 +45,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderList(responseId, title, items, valueKey) {
         const responseDiv = document.getElementById(responseId);
-
+        var interval;
+        if(responseId === "standard-deviation-response")
+            interval = Math.sqrt(getInterval());
+        else
+            interval = getInterval();
+        if(getInterval() === 12){
+            title = title.replace("Monthly", "Yearly");
+        }
         responseDiv.innerHTML = `
             <div class="metric-card">
                 <p>${title}</p>
@@ -34,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${items.map(item => `
                     <div class="metric-card-row">
                         <span>${item.ticker}:</span>
-                        <span>${item[valueKey]}%</span>
+                        <span>${(item[valueKey] * interval).toFixed(2)}%</span>
                     </div>
                 `).join("")}
 

@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.ojalgo.optimisation.Optimisation;
@@ -12,14 +13,17 @@ import com.example.dto.ExpectedReturnsPortfolioResponse;
 import com.example.dto.ExpectedReturnsResponse;
 import com.example.dto.GraphDataResponse;
 import com.example.dto.GraphMVPDataResponse;
+import com.example.dto.GraphPortfolioDataResponse;
 import com.example.dto.GraphTPResponse;
 import com.example.dto.MVPResponse;
+import com.example.dto.MinRiskReturnGraphResponse;
+import com.example.dto.PricePoint;
+import com.example.dto.PriceReturnResponse;
 import com.example.dto.STDVPortfolioResponse;
 import com.example.dto.StandardDeviationResponse;
 import com.example.dto.TPResponse;
 import com.example.dto.VariancePortfolioResponse;
 import com.example.dto.VarianceResponse;
-import com.example.dto.GraphPortfolioDataResponse;
 import com.example.math.CovarianceMatrixCalculator;
 import com.example.math.ExpMonthlyReturnsCalculator;
 import com.example.math.InverseMatrixCalculator;
@@ -31,6 +35,7 @@ import com.example.math.StandardDeviationCalculator;
 import com.example.math.UserPortfolioWeights;
 import com.example.math.VarianceCalculator;
 import com.example.optimisation.MVPWeights;
+import com.example.optimisation.MinRiskForGivenReturn;
 import com.example.optimisation.TPWeights;
 import com.example.service.PortfolioService;
 
@@ -441,5 +446,94 @@ public class PortfolioController {
         double portfolioReturn =
                 PortfolioReturnCalculator.CalculatingPortfolioReturn(expected, tpWeights);
         return new GraphTPResponse(portfolioReturn, portfolioStandardDeviation);
+    }
+    @GetMapping("/price-return")
+    public PriceReturnResponse getPriceReturn(
+            @RequestParam String ticker,
+            @RequestParam(defaultValue = "1mo") String interval
+    ) throws IOException {
+
+        String[] tickerArray = { ticker };
+
+        double[][] prices = getPrices(tickerArray, interval);
+
+
+        ArrayList<PricePoint> points = new ArrayList<>();
+
+        int expectedColumns = 1;
+
+        for (double[] price : prices) {
+                if (price.length != expectedColumns) {
+                    throw new IllegalStateException(
+                            "Expected 1 column per row but found " + price.length
+                    );
+                }
+        }
+        for(int i = 0; i<prices.length; i++){
+                points.add( new PricePoint(prices[i][0], i));
+        }
+
+        return new PriceReturnResponse(points);
+    }
+    @GetMapping("/graph-min-risk-for-return")
+        public MinRiskReturnGraphResponse getMinRiskForGivenReturn(
+            @RequestParam String tickers,
+            @RequestParam String proportions,
+            @RequestParam(defaultValue = "1mo") String interval
+    ) throws IOException {
+       
+        String[] tickerArray = tickers.split(",");
+        String[] proportionsStringArray = proportions.split(",");
+
+        int l = proportionsStringArray.length;
+
+        double[] proportionsArray = new double[l];
+        for(int i = 0; i<l; i++){
+                proportionsArray[i] = Double.parseDouble(proportionsStringArray[i]);
+        }
+
+        double[][] prices = getPrices(tickerArray, interval);
+
+        double[][] returns =
+                LogarithmicReturnsCalculator.CalculatingReturnMatrix(prices);
+
+        double[] expected =
+                ExpMonthlyReturnsCalculator.ExpectedMonthlyReturns(returns);
+
+        double[] weights =
+                UserPortfolioWeights.CalculatingUserWeights(proportionsArray);
+        
+        double[][] covMatrix  = 
+                CovarianceMatrixCalculator.varianceCovarianceMatrix(returns, expected);
+        
+        double[][] inverseMatrix =
+                InverseMatrixCalculator.pseudoInverse(covMatrix);
+        
+        double portfolioVariance =
+                PortfolioVarianceCalculator.CalculatingPortfolioVariance(covMatrix, weights);
+        
+
+        double portfolioStandardDeviation = 
+                PortfolioStandardDeviationCalculator.CalculatingPortfolioSTDV(portfolioVariance);
+        
+        double portfolioReturn =
+                PortfolioReturnCalculator.CalculatingPortfolioReturn(expected, weights);
+
+
+        
+        double[] minWeights = 
+                MinRiskForGivenReturn.CalculatingForGivenRisk(inverseMatrix, expected, portfolioStandardDeviation);
+        
+        double minPortfolioVariance =
+                PortfolioVarianceCalculator.CalculatingPortfolioVariance(covMatrix, minWeights);
+
+        double minPortfolioStandardDeviation = 
+                PortfolioStandardDeviationCalculator.CalculatingPortfolioSTDV(minPortfolioVariance);
+        
+        double minPortfolioReturn =
+                PortfolioReturnCalculator.CalculatingPortfolioReturn(expected, minWeights);
+        
+        return new MinRiskReturnGraphResponse(minPortfolioStandardDeviation, minPortfolioReturn);
+
     }
 }

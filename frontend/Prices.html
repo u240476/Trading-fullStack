@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Prices</title>
+</head>
+<body>
+    <header></header>
+    <nav> 
+            <a href="main.html">Main</a> 
+            <a href="Portfolios.html">Portfolios</a>
+            <a href="Optimisation.html">Optimisation</a>
+            <a href="Prices.html">Prices</a>
+            <a href="Graphs.html" class="active">Graphs</a> 
+            <a href="Terminology.html">Terminology</a>
+            <a href="About.html">About</a>
+    </nav>
+    <main>
+        <section id="hero">
+            <div>
+                <h1>Prices Analytics Dashboard</h1>
+
+                <p>
+                    View historic price data for a security
+                </p>
+            </div>
+        </section>
+
+        <form id="prices-graph-form">
+            <label for="prices-graph-ticker">Secutities Ticker</label>
+            <input type="text" id="prices-graph-ticker" placeholder="AAPL"></input>
+            <button type="submit" id="prices-graph-button">Submit</button>
+            <div id="prices-graph-response"></div>
+        </form>
+
+        <canvas id="pricesChart"></canvas>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+        <script src="Prices.js"></script>
+    </main>
+    <footer>
+        <p>Email: Joshua.Reynolds.2024@mumail.ie  </p>
+        <a href="https://www.linkedin.com/in/joshua-reynolds-b55642256" id="linkedin-link">LinkedIn</a>
+    </footer>
+</body>
+</html>
