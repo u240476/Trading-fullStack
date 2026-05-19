@@ -21,6 +21,7 @@ const graphMVPDataRoute = require("./routes/GraphMVPDataRoute");
 const graphTPDataRoute = require("./routes/GraphTPDataRoute");
 const graphPortfolioDataRoute = require("./routes/GraphPortfolioDataRoute");
 const priceReturnRoute = require("./routes/PriceReturnRoute");
+const graphEfficientFrontierForSTDVRoute = require("./routes/GraphEfficientFrontierForGivenSTDVRoute");
 
 app.use("/api/expected-returns", expectedReturnsRoute);
 app.use("/api/expected-portfolio-returns", expectedPortfolioReturnsRoute);
@@ -35,7 +36,7 @@ app.use("/api/graph-mvp-data", graphMVPDataRoute);
 app.use("/api/graph-tp-data", graphTPDataRoute);
 app.use("/api/graph-portfolio-data", graphPortfolioDataRoute);
 app.use("/api/price-data", priceReturnRoute);
-
+app.use("/api/graph-ef-for-standard-deviation", graphEfficientFrontierForSTDVRoute);
 
 app.get("/", (req, res) => {
     res.send("Server is running");
