@@ -6,7 +6,7 @@ router.get("/", async (req, res) => {
         const { ticker } = req.query;
 
         const response = await fetch(
-            `http://localhost:8080/price-return?ticker=${encodeURIComponent(ticker)}`
+            `http://localhost:8080/graph-price-return?ticker=${encodeURIComponent(ticker)}`
         );
 
         const text = await response.text(); 
