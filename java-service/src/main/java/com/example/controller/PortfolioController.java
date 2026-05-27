@@ -3,7 +3,9 @@ package com.example.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
+import org.ojalgo.optimisation.Optimisation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +24,7 @@ import com.example.math.PortfolioReturnCalculator;
 import com.example.math.PortfolioStandardDeviationCalculator;
 import com.example.math.PortfolioVarianceCalculator;
 import com.example.math.UserPortfolioWeights;
+import com.example.optimisation.MVPWeights;
 import com.example.optimisation.MinRiskForGivenReturn;
 import com.example.service.PortfolioService;
 
@@ -343,22 +346,16 @@ public class PortfolioController {
 
         return new PriceReturnResponse(points);
     }
+
+    
     @GetMapping("/graph-min-risk-for-return")
-        public MinRiskReturnGraphResponse getMinRiskForGivenReturn(
+        public List<MinRiskReturnGraphResponse> getMinRiskForGivenReturn(
             @RequestParam String tickers,
-            @RequestParam String proportions,
             @RequestParam(defaultValue = "1mo") String interval
     ) throws IOException {
        
         String[] tickerArray = tickers.split(",");
-        String[] proportionsStringArray = proportions.split(",");
-
-        int l = proportionsStringArray.length;
-
-        double[] proportionsArray = new double[l];
-        for(int i = 0; i<l; i++){
-                proportionsArray[i] = Double.parseDouble(proportionsStringArray[i]);
-        }
+        
 
         double[][] prices = getPrices(tickerArray, interval);
 
@@ -368,40 +365,61 @@ public class PortfolioController {
         double[] expected =
                 ExpMonthlyReturnsCalculator.ExpectedMonthlyReturns(returns);
 
-        double[] weights =
-                UserPortfolioWeights.CalculatingUserWeights(proportionsArray);
-        
+     
         double[][] covMatrix  = 
                 CovarianceMatrixCalculator.varianceCovarianceMatrix(returns, expected);
+
+        //calcualting mvp standard deviation for the bottom value of my efficient frontier
+        //nothing with a variance of less than the mvp can exist this will cause my method to throw
+        Optimisation.Result result = 
+                MVPWeights.CalculatingMVPWeights(covMatrix);
         
+        double[] mvpWeights = new double[covMatrix.length];
+        for (int i = 0; i < mvpWeights.length; i++) {
+                mvpWeights[i] = result.get(i).doubleValue();
+        } 
+
+        double mvpPortfolioVariance =
+                PortfolioVarianceCalculator.CalculatingPortfolioVariance(covMatrix, mvpWeights);
+
+        double mvpPortfolioStandardDeviation = 
+                PortfolioStandardDeviationCalculator.CalculatingPortfolioSTDV(mvpPortfolioVariance);
+
+        double mvpPortfolioReturn =
+                PortfolioReturnCalculator.CalculatingPortfolioReturn(expected, mvpWeights);
         double[][] inverseMatrix =
                 InverseMatrixCalculator.pseudoInverse(covMatrix);
         
-        double portfolioVariance =
-                PortfolioVarianceCalculator.CalculatingPortfolioVariance(covMatrix, weights);
+  
+        double maxStdv = 0.30;
+    
+
+        ArrayList<MinRiskReturnGraphResponse> results = new ArrayList<>();
+        //method was returning NaN for first iteration of loop because mvp variance is a boundary case.
+        // going to add manually first then start from mvpVariance+0.005
+        results.add(new MinRiskReturnGraphResponse(mvpPortfolioStandardDeviation,mvpPortfolioReturn));
+
+        for(double stdv = mvpPortfolioStandardDeviation+0.005; stdv <= maxStdv; stdv+=0.005){
         
-
-        double portfolioStandardDeviation = 
-                PortfolioStandardDeviationCalculator.CalculatingPortfolioSTDV(portfolioVariance);
-        
-        double portfolioReturn =
-                PortfolioReturnCalculator.CalculatingPortfolioReturn(expected, weights);
-
-
         
         double[] minWeights = 
-                MinRiskForGivenReturn.CalculatingForGivenRisk(inverseMatrix, expected, portfolioStandardDeviation);
+                MinRiskForGivenReturn.CalculatingForGivenRisk(inverseMatrix, expected, stdv);
         
         double minPortfolioVariance =
                 PortfolioVarianceCalculator.CalculatingPortfolioVariance(covMatrix, minWeights);
 
-        double minPortfolioStandardDeviation = 
+        double  minPortfolioStandardDeviation = 
                 PortfolioStandardDeviationCalculator.CalculatingPortfolioSTDV(minPortfolioVariance);
         
         double minPortfolioReturn =
                 PortfolioReturnCalculator.CalculatingPortfolioReturn(expected, minWeights);
         
-        return new MinRiskReturnGraphResponse(minPortfolioStandardDeviation, minPortfolioReturn);
+                results.add( new MinRiskReturnGraphResponse(minPortfolioStandardDeviation,minPortfolioReturn));
+        }
+        
+
+        return results;
+        
 
     }
 }

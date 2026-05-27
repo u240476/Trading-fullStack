@@ -13,7 +13,7 @@ public class MinRiskReturnGraphResponse {
         return minPortfolioStandardDeviation;
     }
 
-    public double getminPortfolioReturn(){
+    public double getMinPortfolioReturn(){
         return minPortfolioReturn;
     }
 }

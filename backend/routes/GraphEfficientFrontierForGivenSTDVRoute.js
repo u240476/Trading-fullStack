@@ -3,11 +3,10 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
     try {
-        const { tickers, proportions } = req.query;
+        const { tickers } = req.query;
 
         const params = new URLSearchParams({
-        tickers,
-        proportions
+        tickers
         });
 
         const response = await fetch(

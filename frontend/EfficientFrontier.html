@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphs</title>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav> 
+            <a href="main.html">Main</a> 
+            <a href="Portfolios.html">Portfolios</a>
+            <a href="Optimisation.html">Optimisation</a>
+            <a href="Prices.html">Prices</a>
+            <a href="Graphs.html" class="active">Graphs</a> 
+            <a href="Terminology.html">Terminology</a>
+            <a href="About.html">About</a>
+    </nav>
+    <main>
+    <section id="hero">
+            <div>
+                <h1>Efficient Frontier Dashboard</h1>
+
+                <p>
+                    Visualise expected returns, risk metrics, minimum-variance portfolios,
+                    and tangency portfolios in an interactive analytics graph.
+                </p>
+
+                <p>
+                    Compare your portfolio against optimised allocations, explore different
+                    securities, and evaluate risk versus return performance.
+                </p>
+
+                <ul>
+                    <li>Expected return & volatility analysis</li>
+                    <li>Portfolio optimisation</li>
+                    <li>Risk vs. return comparison</li>
+                </ul>
+
+            </div>
+    </section>
+    <section id="graph-forms">
+            
+            <form id="graph-portfolio-form">
+                <h4>Graph Your Own Portfolios Returns and Volatility</h4>
+                <label for="graph-portfolio-tickers-input">Enter Stock Tickers</label>
+                <input id="graph-portfolio-tickers-input" placeholder="AAPL,MSFT,GOOGL">
+                <button type="submit" id="graph-portfolio-submit-btn">Submit</button>
+            </form>
+        </section>
+         <canvas id="EfficientFrontierChart"></canvas>
+         <div id="graph-response"></div>
+         <button type="button" id="clear-graph-button">Clear Graph</button>
+        
+        
+    </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="EfficientFrontier.js"></script>
+    <footer>
+        <p>Email: Joshua.Reynolds.2024@mumail.ie  </p>
+        <a href="https://www.linkedin.com/in/joshua-reynolds-b55642256" id="linkedin-link">LinkedIn</a>
+    </footer>   
+</body>
+</html>
+

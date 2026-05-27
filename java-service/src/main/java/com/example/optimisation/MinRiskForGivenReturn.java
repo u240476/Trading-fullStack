@@ -1,5 +1,5 @@
 package com.example.optimisation;
-//this method needs to still be called properly in main
+
 public class MinRiskForGivenReturn {
     public static double[] CalculatingForGivenRisk(
         double[][] inverse,
@@ -17,9 +17,10 @@ public class MinRiskForGivenReturn {
         }
         double D = A * C - Math.pow(B, 2.0);
         double var = Math.pow(STDV, 2.0);
-        if(var < 1/A){
+        //possible cause of white page error
+        /*if(var < 1/A){
             throw new IllegalArgumentException("portfolio cannot be on the efficient frontier given that the variance is less than the MVP");
-        }
+        }*/
         double discriminant = Math.pow(B, 2.0) - A*(C-(D*var));
         
         double R1 = (B + Math.sqrt(discriminant))/A;
