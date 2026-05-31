@@ -19,7 +19,11 @@ import com.example.service.PortfolioService;
 
 @RestController
 public class GraphPortfolioController {
+    private final PortfolioService portfolioService;
 
+    public GraphPortfolioController(PortfolioService portfolioService) {
+        this.portfolioService = portfolioService;
+    }
     public double[][] getPrices(String[] tickerArray, String interval){
         try{
         Calendar end = Calendar.getInstance();
@@ -27,7 +31,7 @@ public class GraphPortfolioController {
         start.add(Calendar.YEAR, -10);
 
         double[][] prices =
-                PortfolioService.getPriceMatrix(
+                portfolioService.getPriceMatrix(
                         tickerArray,
                         start,
                         end,

@@ -10,14 +10,35 @@ import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.stereotype.Service;
 
+import com.example.cache.CachedStocks;
+import com.example.cache.Stock;
+
+@Service
 public class YahooFinanceClient {
-    public static double[] downloadYahooAdjClose(
+    private final CachedStocks cachedStocks;
+
+    public YahooFinanceClient(CachedStocks cachedStocks) {
+        this.cachedStocks = cachedStocks;
+    }
+
+    public double[] downloadYahooAdjClose(
         String ticker,
         long startUnix,
         long endUnix,
         String interval
 ) throws IOException {
+
+    //integrating cache
+    Stock stock = cachedStocks.getEntry(ticker);
+
+    if (stock != null) {
+        double[] prices = stock.getPriceData();
+        return prices;
+    }
+    System.out.println("API HIT: " + ticker);
+
 
     String encodedTicker = URLEncoder.encode(ticker, StandardCharsets.UTF_8);
 
@@ -69,6 +90,8 @@ public class YahooFinanceClient {
             prices[i] = adj.getDouble(i);
         }
     }
+
+    cachedStocks.createEntry(ticker, prices);
 
     return prices;
 }

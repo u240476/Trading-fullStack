@@ -2,10 +2,20 @@ package com.example.service;
 
 import java.io.IOException;
 import java.util.Calendar;
+
+import org.springframework.stereotype.Service;
+
 import com.example.client.YahooFinanceClient;
 
+@Service
 public class PortfolioService {
-    public static double[][] getPriceMatrix(
+
+    private final YahooFinanceClient yahooFinanceClient;
+
+    public PortfolioService(YahooFinanceClient yahooFinanceClient) {
+        this.yahooFinanceClient = yahooFinanceClient;
+    }
+    public double[][] getPriceMatrix(
         String[] tickers,
         Calendar start,
         Calendar end,
@@ -17,11 +27,11 @@ public class PortfolioService {
 
     double[][] prices = null;
     
-
+    
     for (int i = 0; i < tickers.length; i++) {
 
         double[] series =
-                YahooFinanceClient.downloadYahooAdjClose(
+                yahooFinanceClient.downloadYahooAdjClose(
                         tickers[i],
                         startUnix,
                         endUnix,

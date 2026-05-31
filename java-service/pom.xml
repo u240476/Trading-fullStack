@@ -42,11 +42,19 @@
         <artifactId>ojalgo</artifactId>
         <version>52.0.0</version>
     </dependency>
+
     <!--SpringBoot Dependency-->
     <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
+
+    <!--Caffeine dependency for price data cache-->
+    <dependency>
+    <groupId>com.github.ben-manes.caffeine</groupId>
+    <artifactId>caffeine</artifactId>
+    </dependency>
+
 </dependencies>
     <!-- Build plugins -->
     <build>
