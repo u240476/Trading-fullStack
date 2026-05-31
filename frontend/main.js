@@ -1,24 +1,32 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+    var activeInterval = 1;
+
     function getInterval() {
-        const interval = document.getElementById("interval-btn").textContent.trim();
+        return activeInterval;
+    }
+
+    function setButtonInterval(button) {
+        const interval = button.textContent.trim();
         if(interval.toLowerCase() === "yearly"){
-            return 12;
+            activeInterval = 12;
         }else{
-            return 1
+            activeInterval = 1;
         }
     }
-    document.getElementById("interval-btn").onclick = () => {
-        const interval = document.getElementById("interval-btn").textContent.trim().toLowerCase();
 
-        const display = document.getElementById("interval-btn-display");
-        if(interval === "monthly")
+    const buttons = document.querySelectorAll("#interval-btn-display button");
 
-            display.textContent = "Yearly";
-        else
-            display.textContent = "Monthly";
+        buttons.forEach(button => {
+        button.addEventListener("click", () => {
 
-    };
+            buttons.forEach(btn => btn.classList.remove("active"));
+
+            button.classList.add("active");
+            setButtonInterval(button);
+
+        });
+    });
 
     function getTickers(inputId) {
         
