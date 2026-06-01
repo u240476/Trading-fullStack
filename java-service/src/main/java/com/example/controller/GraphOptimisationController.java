@@ -20,14 +20,22 @@ import com.example.math.PortfolioVarianceCalculator;
 import com.example.optimisation.MVPWeights;
 import com.example.optimisation.TPWeights;
 import com.example.service.PortfolioService;
+import com.example.service.RfRateService;
 
 @RestController
 public class GraphOptimisationController {
-    private final PortfolioService portfolioService;
 
-    public GraphOptimisationController(PortfolioService portfolioService) {
+    private final PortfolioService portfolioService;
+    private final RfRateService rfRateService;
+
+    public GraphOptimisationController(
+        PortfolioService portfolioService, 
+        RfRateService rfRateService
+    ){
         this.portfolioService = portfolioService;
+        this.rfRateService = rfRateService;
     }
+
     public double[][] getPrices(String[] tickerArray, String interval){
         try{
         Calendar end = Calendar.getInstance();
@@ -112,9 +120,10 @@ public class GraphOptimisationController {
         double[][] inverseMatrix =
                 InverseMatrixCalculator.pseudoInverse(covMatrix);
         
+        double rf = rfRateService.getRf().getRfAssetYield();
+
         double[] tpWeights =
-        //the 0.0025 is a placeholder for the average monthly return of a 3 year treasury bill it will be replaced by real data
-                TPWeights.CalculatingTangencyPortfolio(inverseMatrix, expected, 0.0025);
+                TPWeights.CalculatingTangencyPortfolio(inverseMatrix, expected, rf);
                 
         double portfolioVariance =
                 PortfolioVarianceCalculator.CalculatingPortfolioVariance(covMatrix, tpWeights);

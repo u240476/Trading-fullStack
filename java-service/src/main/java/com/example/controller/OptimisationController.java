@@ -23,7 +23,7 @@ import com.example.service.RfRateService;
 @RestController
 public class OptimisationController {
     private final PortfolioService portfolioService;
-     private final RfRateService rfRateService;
+    private final RfRateService rfRateService;
 
     public OptimisationController(
         PortfolioService portfolioService, 
