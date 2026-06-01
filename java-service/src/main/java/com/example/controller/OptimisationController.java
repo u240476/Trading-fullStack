@@ -2,7 +2,6 @@ package com.example.controller;
 
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Calendar;
 
 import org.ojalgo.optimisation.Optimisation;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.dto.MVPResponse;
-import com.example.dto.RfAssetResponse;
 import com.example.dto.TPResponse;
 import com.example.math.CovarianceMatrixCalculator;
 import com.example.math.ExpMonthlyReturnsCalculator;
@@ -20,14 +18,22 @@ import com.example.math.LogarithmicReturnsCalculator;
 import com.example.optimisation.MVPWeights;
 import com.example.optimisation.TPWeights;
 import com.example.service.PortfolioService;
+import com.example.service.RfRateService;
 
 @RestController
 public class OptimisationController {
     private final PortfolioService portfolioService;
+     private final RfRateService rfRateService;
 
-    public OptimisationController(PortfolioService portfolioService) {
+    public OptimisationController(
+        PortfolioService portfolioService, 
+        RfRateService rfRateService
+    ){
         this.portfolioService = portfolioService;
+        this.rfRateService = rfRateService;
     }
+
+    
     public double[][] getPrices(String[] tickerArray, String interval){
         try{
         Calendar end = Calendar.getInstance();
@@ -97,27 +103,10 @@ public class OptimisationController {
         double[][] inverseMatrix =
                 InverseMatrixCalculator.pseudoInverse(covMatrix);
         
+        double rf = rfRateService.getRf().getRfAssetYield();
+
         double[] tpWeights =
-        //the 0.0025 is a placeholder for the average monthly return of a 3 year treasury bill it will be replaced by real data
-                TPWeights.CalculatingTangencyPortfolio(inverseMatrix, expected, 0.0025);
+                TPWeights.CalculatingTangencyPortfolio(inverseMatrix, expected, rf);
                 return new TPResponse(tickerArray, tpWeights);
-    }
-
-    @GetMapping("/rf-asset")
-    public RfAssetResponse getRf(
-        @RequestParam(defaultValue = "1mo") String interval
-    ){
-        String[] tickerArray = { "^IRX" };
-
-        double[][] prices = getPrices(tickerArray, interval);
-
-        double avgYield = Arrays.stream(prices[0])
-                        .filter(d -> !Double.isNaN(d))
-                        .average()
-                        .orElseThrow();
-        
-        double rfAssetYield = avgYield/100.0;
-        
-        return new RfAssetResponse(rfAssetYield);
     }
 }
