@@ -7,9 +7,10 @@ import org.springframework.stereotype.Service;
 
 import com.example.client.YahooFinanceClient;
 
+
 @Service
 public class PortfolioService {
-
+    
     private final YahooFinanceClient yahooFinanceClient;
 
     public PortfolioService(YahooFinanceClient yahooFinanceClient) {

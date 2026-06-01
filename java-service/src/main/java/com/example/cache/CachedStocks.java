@@ -13,22 +13,28 @@ public class CachedStocks {
     private final Cache<String, Stock> cache =
             Caffeine.newBuilder()
                     .maximumSize(500)
-                    .expireAfterWrite(Duration.ofMinutes(1140))
+                    .expireAfterWrite(Duration.ofHours(24))
                     .build();
 
     
     public void createEntry(String ticker, double[] prices) {
-
+        if(prices.length >= 120){
         Stock stock = new Stock.Builder(prices)
                 .build();
 
-        cache.put(ticker, stock);
+        cache.put(ticker.toUpperCase(), stock);
+        }
     }
 
     
-    public Stock getEntry(String ticker) {
-        System.out.println("CACHE HIT: " + ticker);
-        return cache.getIfPresent(ticker);
+    public Stock getEntry(String input) {
+        String ticker = input.toUpperCase();
+        Stock stock = cache.getIfPresent(ticker);
+
+        if (stock != null) {
+            System.out.println("CACHE HIT: " + ticker);
+        }
+        return stock;
     }
 
     

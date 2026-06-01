@@ -29,16 +29,14 @@ public class YahooFinanceClient {
         long endUnix,
         String interval
 ) throws IOException {
+    
+    Stock cached = cachedStocks.getEntry(ticker);
 
-    //integrating cache
-    Stock stock = cachedStocks.getEntry(ticker);
-
-    if (stock != null) {
-        double[] prices = stock.getPriceData();
-        return prices;
+    if (cached != null) {
+        return cached.getPriceData();
     }
-    System.out.println("API HIT: " + ticker);
 
+    System.out.println("API HIT: " + ticker);
 
     String encodedTicker = URLEncoder.encode(ticker, StandardCharsets.UTF_8);
 
