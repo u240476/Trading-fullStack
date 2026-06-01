@@ -127,6 +127,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 renderResult(responseId, label, value);
 
+                document.getElementById(tickerInputId).value = "";
+                document.getElementById(propInputId).value = "";
+
             } catch (err) {
                 console.error(err);
                 document.getElementById(responseId).innerHTML =

@@ -70,10 +70,11 @@ document.addEventListener("DOMContentLoaded", () => {
             showError(mvpResponse, "You must enter at least one ticker");
             return;
         }
-
+        
         try {
             const data = await fetchPortfolio("mvp", tickers);
             renderWeights(mvpResponse, data);
+            mvpInput.value = "";
         } catch (err) {
             console.error(err);
             showError(mvpResponse, err.message);
@@ -90,10 +91,11 @@ document.addEventListener("DOMContentLoaded", () => {
             showError(tpResponse, "You must enter at least one ticker");
             return;
         }
-
+        
         try {
             const data = await fetchPortfolio("tp", tickers);
             renderWeights(tpResponse, data);
+            tpInput.value = "";
         } catch (err) {
             console.error(err);
             showError(tpResponse, err.message);

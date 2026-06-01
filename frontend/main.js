@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 ${items.map(item => `
                     <div class="metric-card-row">
-                        <span>${item.ticker}:</span>
+                        <span>${item.ticker.toUpperCase()}:</span>
                         <span>${(item[valueKey] * interval).toFixed(2)}%</span>
                     </div>
                 `).join("")}
@@ -112,6 +112,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const items = mapResponse(data);
 
                 renderList(responseId, title, items, responseKey);
+
+                document.getElementById(inputId).value = "";
 
             } catch (err) {
                 console.error(err);
