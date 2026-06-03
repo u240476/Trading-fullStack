@@ -9,6 +9,11 @@ public class PricePoint {
         this.time = time;
     }
 
-    public double getPrice() { return price; }
-    public int getTime() { return time; }
+    public double getPrice() { 
+        return price; 
+    }
+
+    public int getTime() {
+         return time; 
+    }
 }

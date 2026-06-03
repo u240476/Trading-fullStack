@@ -23,7 +23,7 @@
     <main>
     <section id="hero">
             <div>
-                <h1>Graph Dashboard</h1>
+                <h1>Capital Allocation Line Dashboard</h1>
 
                 <p>
                     Visualise expected returns, risk metrics, minimum-variance portfolios,
@@ -44,33 +44,15 @@
             </div>
     </section>
     <section id="graph-forms">
-            <form id="graph-form">
-                <h4>Graph a Securities Returns and Volatility</h4>
-                <label for="graph-ticker-input">Enter a Stock Ticker</label>
-                <input id="graph-ticker-input" placeholder="AAPL">
-                <button>Add Stock</button>
-            </form>
-            <form id="graph-mvp-form">
-                <h4>Graph a MVP's Returns and Volatility</h4>
-                <label for="graph-mvp-tickers-input">Enter the Stocks to Build an MVP</label>
-                <input id="graph-mvp-tickers-input" placeholder="AAPL,MSFT,GOOGL">
-                <button>Generate Portfolio</button>
-            </form>
-            <form id="graph-tp-form">
-                <h4>Graph a TP's Returns and Volatility</h4>
-                <label for="graph-tp-tickers-input">Enter Stock Tickers</label>
-                <input id="graph-tp-tickers-input" placeholder="AAPL,MSFT,GOOGL">
-                <button type="submit" id="graph-tp-submit-btn">Submit</button>
-            </form>
+            
             <form id="graph-portfolio-form">
                 <h4>Graph Your Own Portfolios Returns and Volatility</h4>
                 <label for="graph-portfolio-tickers-input">Enter Stock Tickers</label>
                 <input id="graph-portfolio-tickers-input" placeholder="AAPL,MSFT,GOOGL">
-                <input id="graph-portfolio-proportions-input" placeholder="1000,2000,3000">
                 <button type="submit" id="graph-portfolio-submit-btn">Submit</button>
             </form>
         </section>
-         <canvas id="riskReturnChart"></canvas>
+         <canvas id="CapitalAllocationLineChart"></canvas>
          <div id="graph-response"></div>
          <button type="button" id="clear-graph-button">Clear Graph</button>
         
@@ -78,7 +60,7 @@
     </section>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="Graph.js"></script>
+    <script src="CapitalAllocationLine.js"></script>
     <footer>
         <p>Email: Joshua.Reynolds.2024@mumail.ie  </p>
         <a href="https://www.linkedin.com/in/joshua-reynolds-b55642256" id="linkedin-link">LinkedIn</a>

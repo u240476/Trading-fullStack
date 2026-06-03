@@ -22,7 +22,9 @@ public class MinRiskForGivenReturn {
             throw new IllegalArgumentException("portfolio cannot be on the efficient frontier given that the variance is less than the MVP");
         }*/
         double discriminant = Math.pow(B, 2.0) - A*(C-(D*var));
-        
+        if (discriminant < 0) {
+            throw new IllegalArgumentException("No feasible portfolio exists for this risk level");
+        }
         double R1 = (B + Math.sqrt(discriminant))/A;
         double R2 = (B - Math.sqrt(discriminant))/A;
 
