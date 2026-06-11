@@ -51,6 +51,30 @@ document.addEventListener("DOMContentLoaded", () => {
     return true;
     }
 
+
+    function renderBetaList(responseId, title, items, valueKey) {
+        const responseDiv = document.getElementById(responseId);
+
+        responseDiv.innerHTML = `
+            <div class="metric-card">
+                <p>${title}</p>
+
+                ${items.map(item => `
+                    <div class="metric-card-row">
+                        <span>${item.ticker.toUpperCase()}:</span>
+                        <span>${item[valueKey]}</span>
+                    </div>
+                `).join("")}
+
+                <button class="close-btn">Close Results</button>
+            </div>
+        `;
+
+        responseDiv.querySelector(".close-btn").addEventListener("click", () => {
+            responseDiv.innerHTML = "";
+        });
+    }
+
     function renderList(responseId, title, items, valueKey) {
         const responseDiv = document.getElementById(responseId);
         var interval;
@@ -123,6 +147,47 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    async function handleBetaListRequest({
+        formId,
+        inputId,
+        responseId,
+        url,
+        responseKey,
+        title,
+        mapResponse
+    }) {
+        document.getElementById(formId).addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const rawInput = document.getElementById(inputId).value;
+
+            const tickers = getTickers(inputId);
+
+            if (!validate(tickers, responseId, rawInput)) return;
+
+            const query = new URLSearchParams({
+                tickers: tickers.join(",")
+            });
+
+            try {
+                const res = await fetch(`${url}?${query}`);
+
+                if (!res.ok) throw new Error("Server error");
+
+                const data = await res.json();
+
+                const items = mapResponse(data);
+
+                renderBetaList(responseId, title, items, responseKey);
+
+                document.getElementById(inputId).value = "";
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById(responseId).innerHTML =
+                    `<p style="color:red;">Error: ${err.message}</p>`;
+            }
+        });
+    }
 
     handleListRequest({
         formId: "expected-returns-form",
@@ -166,4 +231,17 @@ document.addEventListener("DOMContentLoaded", () => {
             }))
     });
 
+    handleBetaListRequest({
+        formId: "beta-form",
+        inputId: "beta-tickers-input",
+        responseId: "beta-response",
+        url: "http://localhost:3010/api/beta-stock",
+        title: "Beta",
+        responseKey: "beta",
+        mapResponse: (data) =>
+            data.tickers.map((ticker, i) => ({
+                ticker,
+                beta: (data.beta[i]).toFixed(2)
+            }))
+    });
 });

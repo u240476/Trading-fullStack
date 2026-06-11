@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graphs</title>
+    <title>Master Graph</title>
 
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -24,44 +24,32 @@
     <main>
     <section id="hero">
             <div>
-                <h1>Efficient Frontier Dashboard</h1>
+                <h1>Master Graph Dashboard</h1>
 
                 <p>
                     Visualise expected returns, risk metrics, minimum-variance portfolios,
                     and tangency portfolios in an interactive analytics graph.
                 </p>
 
-                <p>
-                    Compare your portfolio against optimised allocations, explore different
-                    securities, and evaluate risk versus return performance.
-                </p>
-
-                <ul>
-                    <li>Expected return & volatility analysis</li>
-                    <li>Portfolio optimisation</li>
-                    <li>Risk vs. return comparison</li>
-                </ul>
-
             </div>
     </section>
     <section id="single-forms">
-            
-            <form id="graph-portfolio-form">
-                <h4>Graph The Efficient Frontier</h4>
-                <label for="graph-portfolio-tickers-input">Enter Stock Tickers</label>
-                <input id="graph-portfolio-tickers-input" placeholder="AAPL,MSFT,GOOGL">
-                <button type="submit" id="graph-portfolio-submit-btn">Submit</button>
+    
+            <form id="master-graph-form">
+                <h4>Graph a Portfolios full metrics</h4>
+                <label for="master-graph-tickers-input">Enter Stock Tickers</label>
+                <input id="master-graph-tickers-input" placeholder="AAPL,MSFT,GOOGL">
+                <button type="submit" id="master-graph-submit-btn">Submit</button>
             </form>
-        </section>
-         <canvas id="EfficientFrontierChart"></canvas>
-         <div id="graph-response"></div>
-         <button type="button" id="clear-graph-button">Clear Graph</button>
-        
-        
     </section>
+
+    <canvas id="MasterChart"></canvas>
+    <div id="graph-response"></div>
+    <button type="button" id="clear-graph-button">Clear Graph</button>
+        
     </main>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="EfficientFrontier.js"></script>
+    <script src="MasterGraph.js"></script>
     <footer>
         <p>Email: Joshua.Reynolds.2024@mumail.ie  </p>
         <a href="https://www.linkedin.com/in/joshua-reynolds-b55642256" id="linkedin-link">LinkedIn</a>

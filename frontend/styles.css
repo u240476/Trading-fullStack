@@ -95,8 +95,8 @@ footer{
     text-align: center;
     padding: 5px;
     margin-top: 50px ;
-    background-color: #6c63ff;
-    border-top: 2px solid #4b4b4b;
+    background-color: #0d0c21;
+    border-top: 2px solid #0c0c0c;
     color: #ffffff;
 }
 footer a{
@@ -142,10 +142,20 @@ form:hover {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
 }
+
 #graph-forms {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
+}
+
+#single-forms{
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 16px;
+    max-width: 50%;
+    justify-content: center;
+    margin: 30px auto;
 }
 form h4 {
     font-size: 18px;

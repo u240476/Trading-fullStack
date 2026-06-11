@@ -15,6 +15,7 @@
             <a href="EfficientFrontier.html">Efficient Frontier</a>
             <a href="Prices.html">Prices</a>
             <a href="Graphs.html">Graphs</a> 
+            <a href="MasterGraph.html">Master Graph</a> 
             <a href="CapitalAllocationLine.html">CAL Line</a> 
             <a href="Terminology.html">Terminology</a>
             <a href="About.html">About</a>
@@ -29,17 +30,20 @@
                 </p>
             </div>
         </section>
-
-        <form id="prices-graph-form">
-            <label for="prices-graph-ticker">Secutities Ticker</label>
-            <input type="text" id="prices-graph-ticker" placeholder="AAPL"></input>
-            <button type="submit" id="prices-graph-button">Submit</button>
-            <div id="prices-graph-response"></div>
-        </form>
-
+        <section id="single-forms">
+            <form id="prices-graph-form">
+                <h4>Graph Historic Price Data</h4>
+                <label for="prices-graph-ticker">Securities Ticker</label>
+                <input type="text" id="prices-graph-ticker" placeholder="AAPL"></input>
+                <button type="submit" id="prices-graph-button">Submit</button>
+                <div id="prices-graph-response"></div>
+            </form>
+        </section>
+        
         <canvas id="pricesChart"></canvas>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+        <button type="button" id="clear-graph-button">Clear Graph</button>
         <script src="Prices.js"></script>
     </main>
     <footer>

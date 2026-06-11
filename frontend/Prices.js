@@ -83,14 +83,23 @@ document.addEventListener("DOMContentLoaded", () => {
     max: points[points.length - 1].x
     };
 
-      
+    document.getElementById("prices-graph-ticker").value = "";
     chart.update();
 
     }catch(err){
-        document.getElementById("prices-graph-response").innerHTML =
+        document.getElementById("prices-graph-form").innerHTML =
             `<p style="color:red;">Error: ${err.message}</p>`;
     }
     });
+    document.getElementById("clear-graph-button")
+        .addEventListener("click", () => {
+
+            chart.data.datasets.forEach(d => {
+                d.data = [];
+            });
+
+            chart.update();
+        });
     
    
 });

@@ -39,6 +39,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 }
     });
+    document.getElementById("clear-graph-button")
+        .addEventListener("click", () => {
+
+            chart.data.datasets.forEach(d => {
+                d.data = [];
+            });
+
+            chart.update();
+        });
+
     document.getElementById("graph-portfolio-form").addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -62,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 });
 chart.data.datasets[0].data = points;
+    document.getElementById("graph-portfolio-tickers-input").value = "";
     chart.update();
 
     }catch(err){
@@ -69,6 +80,8 @@ chart.data.datasets[0].data = points;
             `<p style="color:red;">Error: ${err.message}</p>`;
     }
     });
+
+    
     
    
 });

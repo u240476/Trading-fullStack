@@ -40,6 +40,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 }
     });
+    document.getElementById("clear-graph-button")
+        .addEventListener("click", () => {
+
+            chart.data.datasets.forEach(d => {
+                d.data = [];
+            });
+
+            chart.update();
+        });
     document.getElementById("graph-portfolio-form").addEventListener("submit", async (e) => {
     e.preventDefault();
 
