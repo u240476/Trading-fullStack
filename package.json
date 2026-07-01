@@ -1,7 +1,9 @@
 {
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "chartjs-adapter-date-fns": "^3.0.0",
     "date-fns": "^4.1.0",
+    "jsonwebtoken": "^9.0.3",
     "qs": "^6.15.2"
   }
 }

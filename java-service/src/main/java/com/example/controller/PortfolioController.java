@@ -242,7 +242,7 @@ public class PortfolioController {
                 InverseMatrixCalculator.pseudoInverse(covMatrix);
         
   
-        double maxStdv = 0.30;
+        double maxStdv = mvpPortfolioStandardDeviation*3;
     
 
         ArrayList<MinRiskReturnGraphResponse> results = new ArrayList<>();
@@ -250,7 +250,7 @@ public class PortfolioController {
         // going to add manually first then start from mvpVariance+0.005
         results.add(new MinRiskReturnGraphResponse(mvpPortfolioStandardDeviation,mvpPortfolioReturn));
 
-        for(double stdv = mvpPortfolioStandardDeviation+0.005; stdv <= maxStdv; stdv+=0.005){
+        for(double stdv = mvpPortfolioStandardDeviation+=mvpPortfolioStandardDeviation/25; stdv <= maxStdv; stdv+=mvpPortfolioStandardDeviation/25){
         
         
         double[] minWeights = 
