@@ -24,6 +24,8 @@ const priceReturnRoute = require("./routes/PriceReturnRoute");
 const graphEfficientFrontierForSTDVRoute = require("./routes/GraphEfficientFrontierForGivenSTDVRoute");
 const graphCalRoute = require("./routes/GraphCalRoute");
 const masterGraphRoute = require("./routes/MasterGraphRoute");
+const betaStockRoute = require("./routes/BetaStockRoute");
+const authRoutes = require("./routes/authRoute");
 
 app.use("/api/expected-returns", expectedReturnsRoute);
 app.use("/api/expected-portfolio-returns", expectedPortfolioReturnsRoute);
@@ -40,7 +42,9 @@ app.use("/api/graph-portfolio-data", graphPortfolioDataRoute);
 app.use("/api/price-data", priceReturnRoute);
 app.use("/api/graph-ef-for-standard-deviation", graphEfficientFrontierForSTDVRoute);
 app.use("/api/capital-allocation-line", graphCalRoute);
-app.use("/api/master-graph", masterGraphRoute)
+app.use("/api/master-graph", masterGraphRoute);
+app.use("/api/beta-stock", betaStockRoute);
+app.use("/auth", authRoutes);
 
 app.get("/", (req, res) => {
     res.send("Server is running");
