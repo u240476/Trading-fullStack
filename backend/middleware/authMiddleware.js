@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const JWT_SECRET = process.env.JWT_SECRET || "1a2b3c4d5e6f7g8h9i";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 function authMiddleware(req, res, next) {
     const header = req.headers.authorization;
@@ -10,7 +10,7 @@ function authMiddleware(req, res, next) {
     }
 
     const parts = header.split(" ");
-    if (parts.length !== 2) {
+    if (parts.length !== 2 || parts[0] !== "Bearer") {
         return res.status(401).json({ error: "Invalid authorization header" });
     }
 

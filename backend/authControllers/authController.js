@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-console.log("JWT_SECRET loaded:", !!process.env.JWT_SECRET);
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");

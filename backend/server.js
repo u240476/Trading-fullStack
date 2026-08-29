@@ -3,6 +3,20 @@ const cors = require("cors");
 
 const app = express();
 
+const rateLimit = require("express-rate-limit");
+
+const globalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 300,
+    standardHeaders: "draft-7",
+    legacyHeaders: false,
+    message: {
+        error: "Too many requests. Please try again later."
+    }
+});
+
+app.use(globalLimiter);
+
 app.use(cors());
 app.use(express.json());
 
