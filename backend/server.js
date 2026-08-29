@@ -25,7 +25,7 @@ const graphEfficientFrontierForSTDVRoute = require("./routes/GraphEfficientFront
 const graphCalRoute = require("./routes/GraphCalRoute");
 const masterGraphRoute = require("./routes/MasterGraphRoute");
 const betaStockRoute = require("./routes/BetaStockRoute");
-const authRoutes = require("./routes/authRoute");
+const authRoutes = require("./authRoutes/authRoute");
 
 app.use("/api/expected-returns", expectedReturnsRoute);
 app.use("/api/expected-portfolio-returns", expectedPortfolioReturnsRoute);

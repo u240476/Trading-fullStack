@@ -1,9 +1,13 @@
+require('dotenv').config();
+
+console.log("JWT_SECRET loaded:", !!process.env.JWT_SECRET);
+
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const accountModel = require("../models/accountModel");
 
-//change to env file for security purposes
-const JWT_SECRET = "1a2b3c4d5e6f7g8h9i";
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 exports.register = async (req,res) => {
     try{

@@ -3,13 +3,12 @@ const db = require("../config/db");
 // CREATE USER
 exports.createUser = (username, password, role) => {
     return new Promise((resolve, reject) => {
-        const sql = "INSERT INTO accounts (password, username, role) VALUES (?, ?, ?)";
-        db.run(sql, [password, username, role], function(err) {
-            if(err){
-                reject(err);
-            }else{
-                resolve(this.lastID);
+        const sql = "INSERT INTO accounts (username, password, role) VALUES (?, ?, ?)";
+        db.run(sql, [username, password, role], function(err) {
+            if (err) {
+                return reject(err);
             }
+            return resolve(this.lastID);
         });
     });
 };
@@ -18,12 +17,11 @@ exports.createUser = (username, password, role) => {
 exports.findByUsername = (username) => {
     return new Promise((resolve, reject) => {
         const sql = "SELECT * FROM accounts WHERE username = ?";
-        db.get(sql, [username], (err,row) => {
-            if(err){
-                reject(err);
-            }else{
-                resolve(row);
+        db.get(sql, [username], (err, row) => {
+            if (err) {
+                return reject(err);
             }
+            return resolve(row);
         });
     });
 };
@@ -33,11 +31,10 @@ exports.findByAccountId = (id) => {
     return new Promise((resolve, reject) => {
         const sql = "SELECT * FROM accounts WHERE id = ?";
         db.get(sql, [id], (err, row) => {
-            if(err){
-                reject(err);
-            }else{
-                resolve(row);
+            if (err) {
+                return reject(err);
             }
+            return resolve(row);
         });
     });
 };
@@ -46,12 +43,11 @@ exports.findByAccountId = (id) => {
 exports.deleteById = (id) => {
     return new Promise((resolve, reject) => {
         const sql = "DELETE FROM accounts WHERE id = ?";
-        db.run(sql, [id], (err,row) => {
-            if(err){
-                reject(err);
-            }else{
-                resolve(this.changes);
+        db.run(sql, [id], function(err) {
+            if (err) {
+                return reject(err);
             }
+            return resolve(this.changes);
         });
     });
 };
