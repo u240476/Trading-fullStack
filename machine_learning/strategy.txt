@@ -1,0 +1,37 @@
+                  COMPANY NEWS
+                       │
+                       ▼
+             ┌─────────────────┐
+             │ NLP / LLM model │
+             └────────┬────────┘
+                      │
+                      ▼
+              EVENT EXTRACTION
+                      │
+          ┌───────────┼───────────┐
+          ▼           ▼           ▼
+      Sentiment     Events      Novelty
+          │           │           │
+          └───────────┼───────────┘
+                      ▼
+             MONTHLY AGGREGATION
+                      │
+                      ▼
+              COMPANY NEWS VECTOR
+                      │
+          ┌───────────┼───────────┐
+          ▼           ▼           ▼
+       Market       Sector      Company
+       factors     factors      factors
+          │           │           │
+          └───────────┼───────────┘
+                      ▼
+                  ML MODEL
+                      │
+          ┌───────────┼───────────┐
+          ▼           ▼           ▼
+       1-month      2-month     3-month
+       return       return       return
+          │
+          ▼
+         BACKTEST
