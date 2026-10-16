@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const JAVA_SERVICE_URL = process.env.JAVA_SERVICE_URL || "http://localhost:8080";
+
 
 router.get("/", async (req, res) => {
     try {
@@ -11,7 +13,7 @@ router.get("/", async (req, res) => {
     });
 
     const response = await fetch(
-        `http://localhost:8080/portfolio-variance?${params.toString()}`
+        `${JAVA_SERVICE_URL}/portfolio-variance?${params.toString()}`
     );
 
         const text = await response.text(); 

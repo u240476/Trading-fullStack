@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const JAVA_SERVICE_URL = process.env.JAVA_SERVICE_URL || "http://localhost:8080";
+
 
 router.get("/", async (req, res) => {
     try {
@@ -11,7 +13,7 @@ router.get("/", async (req, res) => {
     if (proportions) params.append("proportions", proportions);
 
     const response = await fetch(
-        `http://localhost:8080/portfolio-standard-deviation?${params.toString()}`
+        `${JAVA_SERVICE_URL}/portfolio-standard-deviation?${params.toString()}`
     );
 
         const text = await response.text(); 

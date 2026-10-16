@@ -1,12 +1,14 @@
 const express = require("express");
 const router = express.Router();
+const JAVA_SERVICE_URL = process.env.JAVA_SERVICE_URL || "http://localhost:8080";
+
 
 router.get("/", async (req, res) => {
     try {
         const { ticker } = req.query;
 
         const response = await fetch(
-            `http://localhost:8080/graph-price-return?ticker=${encodeURIComponent(ticker)}`
+            `${JAVA_SERVICE_URL}/graph-price-return?ticker=${encodeURIComponent(ticker)}`
         );
 
         const text = await response.text(); 

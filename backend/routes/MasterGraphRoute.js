@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const JAVA_SERVICE_URL = process.env.JAVA_SERVICE_URL || "http://localhost:8080";
+
 
 router.get("/", async (req, res) => {
     try {
@@ -10,10 +12,10 @@ router.get("/", async (req, res) => {
         }).toString();
 
         const endpoints = {
-            ef: `http://localhost:8080/graph-min-risk-for-return?${query}`,
-            cal: `http://localhost:8080/capital-allocation-line?${query}`,
-            tp: `http://localhost:8080/graph-tp-data?${query}`,
-            mvp: `http://localhost:8080/graph-mvp-data?${query}`
+            ef: `${JAVA_SERVICE_URL}/graph-min-risk-for-return?${query}`,
+            cal: `${JAVA_SERVICE_URL}/capital-allocation-line?${query}`,
+            tp: `${JAVA_SERVICE_URL}/graph-tp-data?${query}`,
+            mvp: `${JAVA_SERVICE_URL}/graph-mvp-data?${query}`
         };
 
         const [efResponse, calResponse, tpResponse, mvpResponse] =

@@ -15,9 +15,9 @@ COPY backend/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=3010
 ENV DB_PATH=/data/database.db
-EXPOSE 3000
+EXPOSE 3010
 
 ENTRYPOINT ["/entrypoint.sh"]
 # CHANGE if your entry file is different (app.js, index.js, src/server.js ...)

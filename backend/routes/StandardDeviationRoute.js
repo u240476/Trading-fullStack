@@ -1,13 +1,15 @@
 const express = require("express");
 console.log("LOADING STD DEV ROUTE FILE");
 const router = express.Router();
+const JAVA_SERVICE_URL = process.env.JAVA_SERVICE_URL || "http://localhost:8080";
+
 
 router.get("/", async (req, res) => {
     try {
         const { tickers } = req.query;
 
         const response = await fetch(
-            `http://localhost:8080/standard-deviation?tickers=${encodeURIComponent(tickers)}`
+            `${JAVA_SERVICE_URL}/standard-deviation?tickers=${encodeURIComponent(tickers)}`
         );
 
         const text = await response.text();

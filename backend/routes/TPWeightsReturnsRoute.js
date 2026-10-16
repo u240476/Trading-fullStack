@@ -1,12 +1,14 @@
 const express = require("express");
 const router = express.Router();
+const JAVA_SERVICE_URL = process.env.JAVA_SERVICE_URL || "http://localhost:8080";
+
 
 router.get("/", async (req, res) => {
     try {
         const { tickers } = req.query;
 
         const response = await fetch(
-            `http://localhost:8080/tp?tickers=${encodeURIComponent(tickers)}`
+            `${JAVA_SERVICE_URL}/tp?tickers=${encodeURIComponent(tickers)}`
         );
 
         const text = await response.text(); 
