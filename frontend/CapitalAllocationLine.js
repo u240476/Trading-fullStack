@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
     try {
-        const res = await fetch(`http://localhost:3010/api/capital-allocation-line?${params}`);
+        const res = await fetch(`/api/capital-allocation-line?${params}`);
 
         if (!res.ok) throw new Error("Server error");
 

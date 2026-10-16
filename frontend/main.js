@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
         formId: "expected-returns-form",
         inputId: "tickers-input",
         responseId: "expected-returns-response",
-        url: "http://localhost:3010/api/expected-returns",
+        url: "/api/expected-returns",
         title: "Monthly Expected Returns",
         responseKey: "expectedReturns",
         mapResponse: (data) =>
@@ -207,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
         formId: "variance-form",
         inputId: "variance-tickers-input",
         responseId: "variance-response",
-        url: "http://localhost:3010/api/variance",
+        url: "/api/variance",
         title: "Variance",
         responseKey: "variance",
         mapResponse: (data) =>
@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
         formId: "standard-deviation-form",
         inputId: "standard-deviation-tickers-input",
         responseId: "standard-deviation-response",
-        url: "http://localhost:3010/api/standard-deviation",
+        url: "/api/standard-deviation",
         title: "Standard Deviation",
         responseKey: "standardDeviation",
         mapResponse: (data) =>
@@ -235,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
         formId: "beta-form",
         inputId: "beta-tickers-input",
         responseId: "beta-response",
-        url: "http://localhost:3010/api/beta-stock",
+        url: "/api/beta-stock",
         title: "Beta",
         responseKey: "beta",
         mapResponse: (data) =>

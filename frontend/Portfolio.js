@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tickerInputId: "portfolio-returns-tickers-input",
         propInputId: "portfolio-returns-proportions-input",
         responseId: "expected-portfolio-returns-response",
-        url: "http://localhost:3010/api/expected-portfolio-returns",
+        url: "/api/expected-portfolio-returns",
         responseKey: "expectedReturns",
         label: "Expected Monthly Return"
     });
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tickerInputId: "portfolio-variance-tickers-input",
         propInputId: "portfolio-variance-proportions-input",
         responseId: "portfolio-variance-response",
-        url: "http://localhost:3010/api/portfolio-variance",
+        url: "/api/portfolio-variance",
         responseKey: "portfolioVariance",
         label: "Monthly Variance"
     });
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tickerInputId: "portfolio-standard-deviation-tickers-input",
         propInputId: "portfolio-standard-deviation-proportions-input",
         responseId: "portfolio-standard-deviation-response",
-        url: "http://localhost:3010/api/portfolio-standard-deviation",
+        url: "/api/portfolio-standard-deviation",
         responseKey: "portfolioStandardDeviation",
         label: "Monthly Standard Deviation"
     });

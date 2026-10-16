@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupGraphForm({
         formId: "graph-form",
 
-        endpoint: "http://localhost:3010/api/graph-data",
+        endpoint: "api/graph-data",
 
         datasetIndex: 0,
 
@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupGraphForm({
         formId: "graph-mvp-form",
 
-        endpoint: "http://localhost:3010/api/graph-mvp-data",
+        endpoint: "/api/graph-mvp-data",
 
         datasetIndex: 1,
 
@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupGraphForm({
         formId: "graph-tp-form",
 
-        endpoint: "http://localhost:3010/api/graph-tp-data",
+        endpoint: "/api/graph-tp-data",
 
         datasetIndex: 2,
 
@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupGraphForm({
         formId: "graph-portfolio-form",
 
-        endpoint: "http://localhost:3010/api/graph-portfolio-data",
+        endpoint: "/api/graph-portfolio-data",
 
         datasetIndex: 3,
 

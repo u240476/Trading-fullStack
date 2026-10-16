@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const ticker = document.getElementById("prices-graph-ticker").value;
 
     try {
-        const res = await fetch(`http://localhost:3010/api/price-data?ticker=${encodeURIComponent(ticker)}`);
+        const res = await fetch(`/api/price-data?ticker=${encodeURIComponent(ticker)}`);
 
         if (!res.ok) throw new Error("Server error");
 

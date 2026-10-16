@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 const res = await fetch(
-                    `http://localhost:3010/api/master-graph?${params.toString()}`
+                    `/api/master-graph?${params.toString()}`
                 );
 
                 if (!res.ok) {

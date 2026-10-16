@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
     try {
-        const res = await fetch(`http://localhost:3010/api/graph-ef-for-standard-deviation?${params}`);
+        const res = await fetch(`/api/graph-ef-for-standard-deviation?${params}`);
 
         if (!res.ok) throw new Error("Server error");
 

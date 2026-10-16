@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
             tickers: tickers.join(",")
         });
 
-        const res = await fetch(`http://localhost:3010/api/${type}?${query}`);
+        const res = await fetch(`/api/${type}?${query}`);
 
         if (!res.ok) {
             throw new Error("Server error");
