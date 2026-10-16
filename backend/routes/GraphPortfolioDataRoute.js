@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
         });
 
         const response = await fetch(
-            `{JAVA_SERVICE_URL}/graph-portfolio-data?${params.toString()}`
+            `${JAVA_SERVICE_URL}/graph-portfolio-data?${params.toString()}`
         );
 
         const text = await response.text(); 

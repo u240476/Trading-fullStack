@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
         });
 
         const response = await fetch(
-            `{JAVA_SERVICE_URL}/graph-min-risk-for-return?${params.toString()}`
+            `${JAVA_SERVICE_URL}/graph-min-risk-for-return?${params.toString()}`
         );
 
         const text = await response.text(); 
