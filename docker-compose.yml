@@ -1,0 +1,31 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - DB_PATH=/data/database.db
+      - JAVA_SERVICE_URL=http://java-service:8080
+    volumes:
+      - sqlite-data:/data
+    depends_on:
+      - java-service
+    restart: unless-stopped
+
+  java-service:
+    build:
+      context: .
+      dockerfile: java-service/Dockerfile
+    restart: unless-stopped
+
+volumes:
+  sqlite-data:
