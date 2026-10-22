@@ -129,6 +129,42 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         return res.json();
     }
+    
+        const responseBox = document.getElementById("graph-response");
+    const gapBox = document.getElementById("frontier-gap-message");
+
+    function showMessage(text, isError = true) {
+        responseBox.textContent = text;
+        responseBox.style.color = isError ? "#ff5252" : "";
+    }
+
+    function renderFrontierGap(master, portfolio, total) {
+        const risk = portfolio.portfolioStandardDeviation;
+        const best = frontierReturnAtRisk(master.efData, master.mvpData, risk);
+
+        console.log("Frontier gap check:", { risk, best, portfolioReturn: portfolio.portfolioReturn, total });
+
+        const pct = x => (x * 100).toFixed(2) + "%";
+
+        if (best === null) {
+            gapBox.textContent = "Your portfolio's risk is outside the range covered by the efficient frontier, so no comparison is possible.";
+            return;
+        }
+
+        const gap = best - portfolio.portfolioReturn;
+
+        if (gap <= 0) {
+            gapBox.textContent = "Your portfolio is already on (or above) the efficient frontier for its level of risk.";
+            return;
+        }
+
+        const extra = gap * total;
+        gapBox.textContent =
+            `At the same risk (${pct(risk)}), an efficient portfolio is expected to return ${pct(best)} ` +
+            `versus your ${pct(portfolio.portfolioReturn)}. That is about ` +
+            `${extra.toLocaleString(undefined, { maximumFractionDigits: 0 })} more per period on your ` +
+            `${total.toLocaleString()} invested. Based on historical estimates, not a guarantee.`;
+    }
 
     document.getElementById("clear-graph-button")
         .addEventListener("click", () => {
@@ -140,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
             chart.update();
         });
 
-    function renderDiagnosticsGraph(master, portfolio, stocks, tickers, total) {
+    function renderDiagnosticsGraph(master, portfolio, stocks, tickers) {
 
         setDataset(0, master.efData.map(p => ({
             x: p.minPortfolioStandardDeviation * 100,
@@ -175,31 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
             y: portfolio.portfolioReturn * 100,
             ticker: "Your Portfolio"
         }]);
-        const best = frontierReturnAtRisk(
-    master.efData,
-    master.mvpData,
-    portfolio.portfolioStandardDeviation
-);
-
-if (best === null) {
-    showMessage("Your portfolio's risk is outside the range covered by the efficient frontier, so no comparison is possible.", true);
-} else {
-    const gap = best - portfolio.portfolioReturn;
-
-    if (gap <= 0) {
-        showMessage("Your portfolio is already on (or above) the efficient frontier for its level of risk.", false);
-    } else {
-        const extra = gap * total;
-        showMessage(
-            `At the same risk (${(portfolio.portfolioStandardDeviation * 100).toFixed(2)}%), ` +
-            `an efficient portfolio is expected to return ${(best * 100).toFixed(2)}% ` +
-            `versus your ${(portfolio.portfolioReturn * 100).toFixed(2)}%. ` +
-            `That is about ${extra.toLocaleString(undefined, { maximumFractionDigits: 0 })} more ` +
-            `per period on your ${total.toLocaleString()} invested.`,
-            false
-        );
-    }
-}
+        
         chart.update();
     }
 
@@ -207,7 +219,7 @@ if (best === null) {
         .addEventListener("submit", async (e) => {
 
             e.preventDefault();
-
+            
             const tickerInput = document.getElementById("portfolio-diagnostics-graph-tickers-input");
             const amountInput = document.getElementById("portfolio-diagnostics-returns-proportions-input");
 
@@ -228,8 +240,11 @@ if (best === null) {
             const total = amounts.reduce((a, b) => a + b, 0);
             const weights = amounts.map(a => a / total);
 
+            showMessage("");
+            gapBox.textContent = "";
+
             try {
-    const [master, portfolio, stocks] = await Promise.all([
+        const [master, portfolio, stocks] = await Promise.all([
         fetchJSON(`/api/master-graph?${new URLSearchParams({
             tickers: tickers.join(",")
         })}`),
@@ -244,7 +259,8 @@ if (best === null) {
 
     tickerInput.value = "";
     amountInput.value = "";
-    renderDiagnosticsGraph(master, portfolio, stocks, tickers, total);
+    renderDiagnosticsGraph(master, portfolio, stocks, tickers);
+    renderFrontierGap(master, portfolio, total);
 
     } catch (err) {
         console.error("Portfolio diagnostics error:", err);
