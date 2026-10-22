@@ -1,199 +1,3 @@
-/*document.addEventListener("DOMContentLoaded", () => {
-
-    const ctx = document.getElementById("portfolio-diagnosticsChart");
-
-    const chart = new Chart(ctx, {
-        type: "scatter",
-        data: {
-            datasets: [
-{
-    label: "Efficient Frontier",
-    data: [],
-    showLine: true,
-    borderColor: "#00d4ff",
-    borderWidth: 4,
-    pointRadius: 0,
-    tension: 0.15,
-    order: 0
-},
-{
-    label: "Capital Allocation Line",
-    data: [],
-    showLine: true,
-    borderColor: "#8b949e",
-    borderDash: [6, 6],
-    borderWidth: 2,
-    pointRadius: 0,
-    order: 1
-},
-{
-    label: "Minimum Variance Portfolio",
-    data: [],
-    pointBackgroundColor: "#00e676",
-    pointBorderColor: "#0d1117",
-    pointBorderWidth: 3,
-    pointRadius: 7,
-    pointHoverRadius: 10,
-    order: 10
-},
-{
-    label: "Tangency Portfolio",
-    data: [],
-    pointBackgroundColor: "#ffb300",
-    pointBorderColor: "#0d1117",
-    pointBorderWidth: 3,
-    pointRadius: 8,
-    pointHoverRadius: 11,
-    order: 11
-},
-{
-    label: "Stocks",
-    data: [],
-    pointBackgroundColor: "#ff5252",
-    pointBorderColor: "#0d1117",
-    pointBorderWidth: 3,
-    pointRadius: 8,
-    pointHoverRadius: 11,
-    order: 11
-},
-{
-    label: "Users Portfolio",
-    data: [],
-    pointBackgroundColor: "#b388ff",
-    pointBorderColor: "#0d1117",
-    pointBorderWidth: 3,
-    pointRadius: 8,
-    pointHoverRadius: 11,
-    order: 11
-}
-
-]
-        },
-        options: {
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: (c) => {
-                        const p = c.raw;
-                        return `${p.ticker ?? c.dataset.label}: ${p.x.toFixed(2)}% risk, ${p.y.toFixed(2)}% return`;
-                        }   
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    title: { display: true, text: "Standard Deviation (%)" }
-                },
-                y: {
-                    title: { display: true, text: "Expected Return (%)" }
-                }
-            }
-        }
-    });
-
-    function parseCSV(input) {
-        return input
-            .split(/[\s,]+/)
-            .map(x => x.trim())
-            .filter(Boolean);
-    }
-
-    function setDataset(index, data) {
-        chart.data.datasets[index].data = data;
-    }
-
-    document.getElementById("clear-graph-button")
-        .addEventListener("click", () => {
-
-            chart.data.datasets.forEach(d => {
-                d.data = [];
-            });
-
-            chart.update();
-        });
-
-    function renderMasterGraph(data, tickers) {
-
-        setDataset(0, data.efData.map(p => ({
-            x: p.minPortfolioStandardDeviation  * 100,
-            y: p.minPortfolioReturn  * 100
-        })));
-
-        setDataset(1, data.calData.map(p => ({
-            x: p.risk  * 100,
-            y: p.expectedReturn * 100
-        })));
-
-        setDataset(2, [{
-            x: data.mvpData.portfolioStandardDeviation * 100,
-            y: data.mvpData.portfolioReturn * 100,
-            ticker: "MVP"
-        }]);
-
-        setDataset(3, [{
-            x: data.tpData.portfolioStandardDeviation * 100,
-            y: data.tpData.portfolioReturn * 100,
-            ticker: "TP"
-        }]);
-        const stocks = Array.isArray(data.StockData) ? data.StockData : [data.StockData];
-        setDataset(4, stocks.map((s, i) => ({
-            x: s.stockStandardDeviation * 100,
-            y: s.stockReturn * 100,
-            ticker: s.ticker ?? tickers[i]
-        })));
-
-        setDataset(5, [{
-            x: data.userPortfolioData.portfolioStandardDeviation * 100,
-            y: data.userPortfolioData.portfolioReturn * 100,
-            ticker: "User Portfolio"
-        }]);
-
-        chart.update();
-    }
-
-    document.getElementById("portfolio-diagnostics-graph-form")
-    .addEventListener("submit", async (e) => {
-
-            e.preventDefault();
-
-            const input = document.getElementById("portfolio-diagnostics-graph-tickers-input").value;
-
-            const amounts = parseCSV(document.getElementById("portfolio-diagnostics-returns-proportions-input").value);
-
-            if (amounts.length !== tickers.length) {
-                alert("Enter one amount per ticker");
-                return;
-            }
-            if (!input.trim()) {
-                alert("Please enter tickers");
-                return;
-            }
-
-            const tickers = parseCSV(input);
-
-            try {
-                const params = new URLSearchParams({
-                    tickers: tickers.join(","),
-                    amounts: amounts.join(",")
-                });
-
-                const res = await fetch(
-                    `/api/master-graph?${params.toString()}`
-                );
-
-                if (!res.ok) {
-                    throw new Error(await res.text());
-                }
-
-                const data = await res.json();
-                document.getElementById("master-graph-tickers-input").value = "";
-                renderMasterGraph(data, tickers);
-
-            } catch (err) {
-                console.error("Master graph error:", err);
-            }
-        });
-});*/
 document.addEventListener("DOMContentLoaded", () => {
 
     const ctx = document.getElementById("portfolio-diagnosticsChart");
@@ -293,7 +97,27 @@ document.addEventListener("DOMContentLoaded", () => {
             .map(x => x.trim())
             .filter(Boolean);
     }
+    function frontierReturnAtRisk(efData, mvp, risk) {
+    const upper = efData
+        .filter(p => p.minPortfolioReturn >= mvp.portfolioReturn)
+        .map(p => ({ risk: p.minPortfolioStandardDeviation, ret: p.minPortfolioReturn }))
+        .sort((a, b) => a.risk - b.risk);
 
+    if (upper.length < 2 || risk < upper[0].risk || risk > upper[upper.length - 1].risk) {
+        return null;   
+    }
+
+    for (let i = 1; i < upper.length; i++) {
+        if (risk <= upper[i].risk) {
+            const a = upper[i - 1];
+            const b = upper[i];
+            if (b.risk === a.risk) return b.ret;
+            const t = (risk - a.risk) / (b.risk - a.risk);
+            return a.ret + t * (b.ret - a.ret);
+        }
+    }
+    return null;
+}
     function setDataset(index, data) {
         chart.data.datasets[index].data = data;
     }
@@ -316,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
             chart.update();
         });
 
-    function renderDiagnosticsGraph(master, portfolio, stocks, tickers) {
+    function renderDiagnosticsGraph(master, portfolio, stocks, tickers, total) {
 
         setDataset(0, master.efData.map(p => ({
             x: p.minPortfolioStandardDeviation * 100,
@@ -351,7 +175,31 @@ document.addEventListener("DOMContentLoaded", () => {
             y: portfolio.portfolioReturn * 100,
             ticker: "Your Portfolio"
         }]);
+        const best = frontierReturnAtRisk(
+    master.efData,
+    master.mvpData,
+    portfolio.portfolioStandardDeviation
+);
 
+if (best === null) {
+    showMessage("Your portfolio's risk is outside the range covered by the efficient frontier, so no comparison is possible.", true);
+} else {
+    const gap = best - portfolio.portfolioReturn;
+
+    if (gap <= 0) {
+        showMessage("Your portfolio is already on (or above) the efficient frontier for its level of risk.", false);
+    } else {
+        const extra = gap * total;
+        showMessage(
+            `At the same risk (${(portfolio.portfolioStandardDeviation * 100).toFixed(2)}%), ` +
+            `an efficient portfolio is expected to return ${(best * 100).toFixed(2)}% ` +
+            `versus your ${(portfolio.portfolioReturn * 100).toFixed(2)}%. ` +
+            `That is about ${extra.toLocaleString(undefined, { maximumFractionDigits: 0 })} more ` +
+            `per period on your ${total.toLocaleString()} invested.`,
+            false
+        );
+    }
+}
         chart.update();
     }
 
@@ -376,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // turn amounts (e.g. 1000,2000,30000) into weights that sum to 1
+
             const total = amounts.reduce((a, b) => a + b, 0);
             const weights = amounts.map(a => a / total);
 
@@ -396,10 +244,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     tickerInput.value = "";
     amountInput.value = "";
-    renderDiagnosticsGraph(master, portfolio, stocks, tickers);
+    renderDiagnosticsGraph(master, portfolio, stocks, tickers, total);
 
-} catch (err) {
-    console.error("Portfolio diagnostics error:", err);
-}
-        });
+    } catch (err) {
+        console.error("Portfolio diagnostics error:", err);
+        showMessage("Could not load data. Check that every ticker is valid. " + err.message);
+    }
+    });
 });
