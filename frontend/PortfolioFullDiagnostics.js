@@ -263,8 +263,15 @@ document.addEventListener("DOMContentLoaded", () => {
     renderFrontierGap(master, portfolio, total);
 
     } catch (err) {
+
         console.error("Portfolio diagnostics error:", err);
-        showMessage("Could not load data. Check that every ticker is valid. " + err.message);
-    }
+
+        showMessage(
+            "Could not load portfolio data: " + err.message
+        );
+
+        gapBox.textContent =
+            "Could not calculate the portfolio gap: " + err.message;
+        }
     });
 });
