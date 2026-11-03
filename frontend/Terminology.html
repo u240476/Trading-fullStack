@@ -165,4 +165,19 @@
         <p>Email: Joshua.Reynolds.2024@mumail.ie  </p>
         <a href="https://www.linkedin.com/in/joshua-reynolds-b55642256" id="linkedin-link">LinkedIn</a>
 </footer>
+<script>
+    const navToggle = document.querySelector('.nav-toggle');
+    const nav = document.querySelector('nav');
+
+    if (navToggle && nav) {
+        navToggle.addEventListener('click', () => {
+        const open = nav.classList.toggle('open');
+        navToggle.setAttribute('aria-expanded', open);
+    });
+
+    nav.querySelectorAll('a').forEach(link =>
+        link.addEventListener('click', () => nav.classList.remove('open'))
+    );
+    }
+</script>
 </body>
