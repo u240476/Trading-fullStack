@@ -60,10 +60,10 @@ header{
 }
 
 nav {
-    /*max-width: 1300px;*/
+   
     margin: 0 auto;
     padding: 16px 20px;
-    
+    flex-wrap: wrap;
     display: flex;
     justify-content: space-around;
     align-items: center;

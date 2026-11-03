@@ -1,5 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
-    
+    const navToggle = document.querySelector('.nav-toggle');
+    const nav = document.querySelector('nav');
+
+    if (navToggle && nav) {
+        navToggle.addEventListener('click', () => {
+        const open = nav.classList.toggle('open');
+        navToggle.setAttribute('aria-expanded', open);
+    });
+
+    nav.querySelectorAll('a').forEach(link =>
+        link.addEventListener('click', () => nav.classList.remove('open'))
+    );
+    }
     var activeInterval = 1;
 
     function getInterval() {
