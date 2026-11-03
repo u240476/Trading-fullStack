@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
             `At the same risk (${pct(risk)}), an efficient portfolio is expected to return ${pct(best)} ` +
             `versus your ${pct(portfolio.portfolioReturn)}. That is about ` +
             `${extra.toLocaleString(undefined, { maximumFractionDigits: 0 })} more per period on your ` +
-            `${total.toLocaleString()} invested. Based on historical estimates, not a guarantee.`;
+            `${total.toLocaleString()} invested based on our model.`;
     }
 
     document.getElementById("clear-graph-button")
