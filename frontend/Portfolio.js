@@ -1,6 +1,4 @@
-console.log("Portfolio.js file loaded");
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("Portfolio.js loaded");
     const navToggle = document.querySelector('.nav-toggle');
     const nav = document.querySelector('nav');
 
