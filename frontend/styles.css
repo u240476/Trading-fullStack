@@ -303,7 +303,10 @@ label {
 .nav-toggle {
     display: none;
 }
-
+#frontier-gap-message{
+    background-color: #ffffff;
+    padding: 20px;
+}
 
 @media (max-width: 700px) {
 
