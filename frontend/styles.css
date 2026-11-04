@@ -297,7 +297,10 @@ label {
     color: #d1d5db;
 }
 .frontier-gap-message{
-    color: #ffffff;
+    color: #050505;
+    background-color: #ffffff;
+    padding: 20px;
+    max-width: 400px;
 }
 
 .nav-toggle {
